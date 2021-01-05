@@ -12,6 +12,7 @@ public class PlayerMove : MonoBehaviour
     private float jumpForce = 7;
     private float speed;
     private Vector3 lastPos;
+    private Vector3 velocity;
 
     //상태 변수
     private bool isWalk;
@@ -43,7 +44,6 @@ public class PlayerMove : MonoBehaviour
     void Update()
     {
         IsGround();
-        MoveCheck();
         Move();
         Run();
         Jump();
@@ -59,25 +59,14 @@ public class PlayerMove : MonoBehaviour
         Vector3 moveHorizontal = transform.right * moveX;
         Vector3 moveVertical = transform.forward * moveZ;
 
-        Vector3 velocity = (moveHorizontal + moveVertical).normalized * speed;
-
+        velocity = (moveHorizontal + moveVertical).normalized * speed;
+        if (velocity.magnitude <= 0.01f)
+            isWalk = false;
+        else if (!isRun)
+            isWalk = true;
         rig.MovePosition(transform.position + velocity * Time.deltaTime);
         animator.SetBool("Run", isRun);
         animator.SetBool("Walk", isWalk);
-    }
-    //이동중인지 체크
-    private void MoveCheck()
-    {
-        if(!isRun && isGround)
-        {
-            if (Vector3.Distance(lastPos, transform.position) >= 0.01)
-                isWalk = true;
-            else
-            {
-                isWalk = false;
-            }
-            lastPos = transform.position;
-        }
     }
     //달리기
     private void Run()
