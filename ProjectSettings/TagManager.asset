@@ -9,6 +9,7 @@ TagManager:
   - BulletSpawn
   - LevelPart
   - Dummie
+  - WeaponCam
   layers:
   - Default
   - TransparentFX

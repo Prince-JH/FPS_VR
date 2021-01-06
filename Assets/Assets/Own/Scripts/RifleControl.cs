@@ -14,6 +14,8 @@ public class RifleControl : MonoBehaviour
     private float currentFireRate;
     //상태 변수
     private bool isReload = false;
+    private bool zoom = false;
+    private bool nearClip = false;
     [HideInInspector]
     public bool isAimMode = false;
 
@@ -60,7 +62,10 @@ public class RifleControl : MonoBehaviour
                 if (currentRifle.currentBulletCount > 0)
                     Shoot();
                 else
+                {
+                    CancelAim();
                     StartCoroutine(Reload());
+                }
             }
         }
     }
@@ -68,9 +73,62 @@ public class RifleControl : MonoBehaviour
     private void Shoot()
     {
         currentRifle.currentBulletCount--;
-        currentFireRate = currentRifle.fireRate; //연사 속도 재계산
+        //연사 속도 재계산
+        currentFireRate = currentRifle.fireRate;
         currentRifle.muzzleFlash.Play();
         audio.Play();
+        Hit();
+        //총기 반동 코루틴
+        StopAllCoroutines();
+        StartCoroutine(RetroactionCoroutine());
+    }
+    //피격
+    private void Hit()
+    {
+        if(Physics.Raycast(theCam.transform.position, theCam.transform.forward, out hitInfo, currentRifle.range))
+        {
+            GameObject clone = Instantiate(hit_effect_prefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
+            Destroy(clone, 1f);
+        }
+    }
+    IEnumerator RetroactionCoroutine()
+    {
+        Vector3 recoilBack = new Vector3(originPos.x, originPos.y, -currentRifle.resistForce);
+        Vector3 aimRecoilBack = new Vector3(currentRifle.getAimOriginPos().x, currentRifle.getAimOriginPos().y, -currentRifle.resistAimForce);
+        if(!isAimMode)
+        {
+            currentRifle.transform.localPosition = originPos;
+            
+            //반동
+            while(currentRifle.transform.localPosition.z > -currentRifle.resistForce + 0.02f)
+            {
+                currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, recoilBack, 0.4f);
+                yield return null;
+            }
+            //원위치
+            while(currentRifle.transform.localPosition.z < originPos.z - 0.02f)
+            {
+                currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, originPos, 0.1f);
+                yield return null;
+            }
+        }
+        else
+        {
+            currentRifle.transform.localPosition = currentRifle.getAimOriginPos();
+
+            //반동
+            while (currentRifle.transform.localPosition.z > -currentRifle.resistAimForce + 0.02f)
+            {
+                currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, aimRecoilBack, 0.4f);
+                yield return null;
+            }
+            //원위치
+            while (currentRifle.transform.localPosition.z < currentRifle.getAimOriginPos().z - 0.02f)
+            {
+                currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, currentRifle.getAimOriginPos(), 0.1f);
+                yield return null;
+            }
+        }
     }
 
     //재장전 시도
@@ -78,6 +136,7 @@ public class RifleControl : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R) && !isReload && currentRifle.currentBulletCount < currentRifle.reloadBulletCount)
         {
+            CancelAim();
             StartCoroutine(Reload());
         }
     }
@@ -104,6 +163,7 @@ public class RifleControl : MonoBehaviour
                 currentRifle.carryBulletCount = 0;
             }
             isReload = false;
+            
         }
         else
         {
@@ -118,6 +178,12 @@ public class RifleControl : MonoBehaviour
             Aim();
         }
     }
+    //정조준 취소
+    private void CancelAim()
+    {
+        if (isAimMode)
+            Aim();
+    }
     //정조준
     private void Aim()
     {
@@ -127,11 +193,15 @@ public class RifleControl : MonoBehaviour
         {
             StopAllCoroutines();
             StartCoroutine(AimCoroutine());
+            StartCoroutine(ZoomIn());
+            StartCoroutine(NearClipIn());
         }
         else
         {
             StopAllCoroutines();
             StartCoroutine(ButtstockCoroutine());
+            StartCoroutine(ZoomOut());
+            StartCoroutine(NearClipOut());
         }
     }
 
@@ -141,10 +211,9 @@ public class RifleControl : MonoBehaviour
         while (currentRifle.transform.localPosition != currentRifle.getAimOriginPos())
         {
             currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, currentRifle.getAimOriginPos(), 0.2f);
-            yield return null;
+            
         }
-        theCam.fieldOfView = 13.4f;
-        theCam.nearClipPlane = 0.01f;
+        yield return null;
     }
     //정조준 비활성화
     IEnumerator ButtstockCoroutine()
@@ -152,14 +221,48 @@ public class RifleControl : MonoBehaviour
         while (currentRifle.transform.localPosition != originPos)
         {
             currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, originPos, 0.2f);
+        }
+        yield return null;
+        
+    }
+    IEnumerator ZoomIn()
+    {
+        
+        while(theCam.fieldOfView > 22)
+        {
+            theCam.fieldOfView = Mathf.Lerp(theCam.fieldOfView, 22, 0.2f);
             yield return null;
         }
-        theCam.fieldOfView = 60;
-        theCam.nearClipPlane = 0.3f;
+        
     }
-
-
-    public Rifle GetGun()
+    IEnumerator ZoomOut()
+    {
+        while (theCam.fieldOfView < 60)
+        {
+            theCam.fieldOfView = Mathf.Lerp(theCam.fieldOfView, 60, 0.2f);
+            yield return null;
+        }
+        
+    }
+    IEnumerator NearClipIn()
+    {
+        while (theCam.nearClipPlane > 0.01f)
+        {
+            theCam.nearClipPlane = Mathf.Lerp(theCam.nearClipPlane, 0.01f, 0.2f);
+            yield return null;
+        }
+        
+    }
+    IEnumerator NearClipOut()
+    {
+        while (theCam.nearClipPlane < 0.3f)
+        {
+            theCam.nearClipPlane = Mathf.Lerp(theCam.nearClipPlane, 0.3f, 0.2f);
+            yield return null;
+        }
+        
+    }
+    public Rifle GetRifle()
     {
         return this.currentRifle;
     }

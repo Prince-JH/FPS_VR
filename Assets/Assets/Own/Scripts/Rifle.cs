@@ -22,7 +22,7 @@ public class Rifle : MonoBehaviour
     private Vector3 aimOriginPos;
     private void Start()
     {
-        aimOriginPos = new Vector3(0, -0.06f, 0.05f);
+        aimOriginPos = new Vector3(-0.14f, 0.05f, -0.11f);
     }
 
     public Vector3 getAimOriginPos()

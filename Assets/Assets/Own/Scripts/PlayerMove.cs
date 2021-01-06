@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    [SerializeField]
+    private Rifle currentRifle;
     //플레이어 이동 관련 변수
+
     [SerializeField]
     private float walkSpeed;
     [SerializeField]
@@ -66,7 +69,9 @@ public class PlayerMove : MonoBehaviour
             isWalk = true;
         rig.MovePosition(transform.position + velocity * Time.deltaTime);
         animator.SetBool("Run", isRun);
+        currentRifle.animator.SetBool("Run", isRun);
         animator.SetBool("Walk", isWalk);
+        currentRifle.animator.SetBool("Walk", isWalk);
     }
     //달리기
     private void Run()
