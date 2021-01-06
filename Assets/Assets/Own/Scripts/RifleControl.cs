@@ -14,8 +14,6 @@ public class RifleControl : MonoBehaviour
     private float currentFireRate;
     //상태 변수
     private bool isReload = false;
-    private bool zoom = false;
-    private bool nearClip = false;
     [HideInInspector]
     public bool isAimMode = false;
 
@@ -73,7 +71,7 @@ public class RifleControl : MonoBehaviour
     private void Shoot()
     {
         currentRifle.currentBulletCount--;
-        //연사 속도 재계산
+        //연사 속도  재계산
         currentFireRate = currentRifle.fireRate;
         currentRifle.muzzleFlash.Play();
         audio.Play();

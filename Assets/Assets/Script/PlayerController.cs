@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     //private으로 선언해도 inspector창에서 보이게 : SerializeField
+
     //스피드 조정 변수
     [SerializeField]
     private float walkSpeed;

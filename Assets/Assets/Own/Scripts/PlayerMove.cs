@@ -33,12 +33,14 @@ public class PlayerMove : MonoBehaviour
     private Rigidbody rig;
     private CapsuleCollider capsuleCollider;
     private Animator animator;
+    private Crosshair crosshair;
     // Start is called before the first frame update
     void Start()
     {
         rig = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         animator = GetComponent<Animator>();
+        crosshair = FindObjectOfType<Crosshair>();
         //초기화
         speed = walkSpeed;
     }
@@ -70,8 +72,10 @@ public class PlayerMove : MonoBehaviour
         rig.MovePosition(transform.position + velocity * Time.deltaTime);
         animator.SetBool("Run", isRun);
         currentRifle.animator.SetBool("Run", isRun);
+        crosshair.RunAnimation(isRun);
         animator.SetBool("Walk", isWalk);
         currentRifle.animator.SetBool("Walk", isWalk);
+        crosshair.WalkAnimation(isWalk);
     }
     //달리기
     private void Run()
@@ -90,8 +94,9 @@ public class PlayerMove : MonoBehaviour
     }
     //바닥에 있는지 확인
     private void IsGround()
-    {
+    { 
         isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y + 0.1f);
+        crosshair.JumpAnimation(!isGround);
     }
     //점프
     private void Jump()
