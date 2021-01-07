@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿/*
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,3 +32,4 @@ public class Hud : MonoBehaviour
         text_Bullet[2].text = currentGun.currentBulletCount.ToString();
     }
 }
+*/

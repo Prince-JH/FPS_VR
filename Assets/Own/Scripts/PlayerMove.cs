@@ -1,0 +1,128 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMove : MonoBehaviour
+{
+    [SerializeField]
+    private Gun currentRifle;
+    //플레이어 이동 관련 변수
+
+    [SerializeField]
+    private float walkSpeed;
+    [SerializeField]
+    private float runSpeed;
+    private float jumpForce = 8.5f;
+    private float speed;
+    private Vector3 lastPos;
+    private Vector3 velocity;
+
+    //상태 변수
+    private bool isWalk;
+    private bool isRun;
+    private bool isGround = true;
+
+    //카메라
+    private float lookSensitivity = 2.5f;
+    private float cameraRotationLimit = 60;
+    private float currentCameraRotationX = 0;
+
+    //컴포넌트 
+    [SerializeField]
+    private Camera cam;
+    private Rigidbody rig;
+    private CapsuleCollider capsuleCollider;
+    [HideInInspector]
+    public Animator animator;
+    private Crosshair crosshair;
+    // Start is called before the first frame update
+    void Start()
+    {
+        rig = GetComponent<Rigidbody>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
+        animator = GetComponent<Animator>();
+        crosshair = FindObjectOfType<Crosshair>();
+        //초기화
+        speed = walkSpeed;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        IsGround();
+        Move();
+        Run();
+        Jump();
+        RotateLR();
+        RotateUD();
+    }
+    //플레이어 이동
+    private void Move()
+    {
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveZ = Input.GetAxisRaw("Vertical");
+
+        Vector3 moveHorizontal = transform.right * moveX;
+        Vector3 moveVertical = transform.forward * moveZ;
+
+        velocity = (moveHorizontal + moveVertical).normalized * speed;
+        if (velocity.magnitude <= 0.01f)
+            isWalk = false;
+        else if (!isRun)
+            isWalk = true;
+        rig.MovePosition(transform.position + velocity * Time.deltaTime);
+        animator.SetBool("Run", isRun);
+        currentRifle.animator.SetBool("Run", isRun);
+        crosshair.RunAnimation(isRun);
+        animator.SetBool("Walk", isWalk);
+        currentRifle.animator.SetBool("Walk", isWalk);
+        crosshair.WalkAnimation(isWalk);
+    }
+    //달리기
+    private void Run()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            isWalk = false;
+            isRun = true;
+            speed = runSpeed;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isRun = false;
+            speed = walkSpeed;
+        }
+    }
+    //바닥에 있는지 확인
+    private void IsGround()
+    { 
+        isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y);
+        crosshair.JumpAnimation(!isGround);
+    }
+    //점프
+    private void Jump()
+    {
+        if(Input.GetKeyDown(KeyCode.Space) && isGround)
+        {
+            isWalk = false;
+            rig.velocity = transform.up * jumpForce;
+        }
+    }
+    //카메라 좌우 회전(캐릭터 회전)
+    private void RotateLR()
+    {
+        float yRotation = Input.GetAxisRaw("Mouse X");
+        Vector3 rotateLR = new Vector3(0f, yRotation, 0f) * lookSensitivity;
+        rig.MoveRotation(rig.rotation * Quaternion.Euler(rotateLR));
+    }
+    //카메라 위 아래 회전(카메라 회전)
+    private void RotateUD()
+    {
+        float xRotation = Input.GetAxisRaw("Mouse Y");
+        float rotateUD = xRotation * lookSensitivity;
+        currentCameraRotationX -= rotateUD;
+        currentCameraRotationX = Mathf.Clamp(currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit);
+
+        cam.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0, 0);
+    }
+}
