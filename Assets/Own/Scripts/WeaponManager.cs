@@ -12,9 +12,10 @@ public class WeaponManager : MonoBehaviour
 
     private float changeWeaponDelayTime = 0.1f;
     private float changeWeaponTime = 0.1f;
-
+    private int weaponNum = 1;
     [SerializeField]
     private Rifle[] guns;
+
 
     //무기 관리
     private Dictionary<string, Rifle> rifleDic = new Dictionary<string, Rifle>();
@@ -22,6 +23,8 @@ public class WeaponManager : MonoBehaviour
     //필요 컴포넌트
     [SerializeField]
     private RifleControl rifleControl;
+    [SerializeField]
+    private GLControl gLControl;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,12 +37,18 @@ public class WeaponManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!isChangeWeapon)
+        if (!isChangeWeapon)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                weaponNum = 1;
                 StartCoroutine(ChangeWeaponCoroutine("AssaultRifle"));
+            }
             else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                weaponNum = 2;
                 StartCoroutine(ChangeWeaponCoroutine("GrenadeLauncher"));
+            }
         }
     }
 
@@ -58,8 +67,19 @@ public class WeaponManager : MonoBehaviour
     }
     private void CancelPreAction()
     {
-        rifleControl.CancelAim();
-        rifleControl.CancelReload();
+        
+        switch (weaponNum)
+        {
+            case 1:
+                rifleControl.CancelAim();
+                rifleControl.CancelReload();
+                break;
+            case 2:
+                gLControl.CancelReload();
+                break;
+        }
+        
+        
     }
     private void WeaponChange(string name)
     {

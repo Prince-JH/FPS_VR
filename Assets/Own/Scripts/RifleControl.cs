@@ -37,12 +37,12 @@ public class RifleControl : MonoBehaviour
     [SerializeField]
     private GameObject hit_effect_prefab;
     //크로스헤어
+    [SerializeField]
     private Crosshair crosshair;
     private void Start()
     {
         originPos = Vector3.zero;
         audio = GetComponent<AudioSource>();
-        crosshair = FindObjectOfType<Crosshair>();
 
         WeaponManager.currentWeapon = currentRifle;
         WeaponManager.currentWeaponAnimator = currentRifle.animator;
@@ -292,15 +292,15 @@ public class RifleControl : MonoBehaviour
     }
     public void GunChange(Rifle gun)
     {
-        if(WeaponManager.currentWeapon != null)
+        if(WeaponManager.currentWeapon != null && !isAimMode)
         {
-            WeaponManager.currentWeapon.gameObject.SetActive(false);
+            WeaponManager.currentWeapon.gameObject.transform.parent.gameObject.SetActive(false);
         }
         currentRifle = gun;
         WeaponManager.currentWeapon = currentRifle;
         WeaponManager.currentWeaponAnimator = currentRifle.animator;
 
         currentRifle.transform.localPosition = Vector3.zero;
-        currentRifle.gameObject.SetActive(true);
+        currentRifle.gameObject.transform.parent.gameObject.SetActive(true);
     }
 }
