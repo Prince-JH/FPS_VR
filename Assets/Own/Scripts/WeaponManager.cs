@@ -10,9 +10,14 @@ public class WeaponManager : MonoBehaviour
     public static Gun currentWeapon;
     public static Animator currentWeaponAnimator;
 
+    //크로스헤어
+    [SerializeField]
+    private Crosshair crosshairAR;
+    [SerializeField]
+    private CrosshairGL crosshairGL;
+
     private float changeWeaponDelayTime = 0.1f;
     private float changeWeaponTime = 0.1f;
-    private int weaponNum = 1;
     [SerializeField]
     private Rifle[] guns;
 
@@ -39,16 +44,24 @@ public class WeaponManager : MonoBehaviour
     {
         if (!isChangeWeapon)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (Input.GetKeyDown(KeyCode.Alpha1) && currentWeapon.name == "GrenadeLauncher")
             {
-                weaponNum = 1;
                 StartCoroutine(ChangeWeaponCoroutine("AssaultRifle"));
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            else if (Input.GetKeyDown(KeyCode.Alpha2) && currentWeapon.name == "AssaultRifle")
             {
-                weaponNum = 2;
                 StartCoroutine(ChangeWeaponCoroutine("GrenadeLauncher"));
             }
+        }
+        if (currentWeapon.name == "AssaultRifle")
+        {
+            crosshairAR.crosshairAR.SetActive(true);
+            crosshairGL.crosshairGL.SetActive(false);
+        }
+        else if(currentWeapon.name == "GrenadeLauncher")
+        {
+            crosshairAR.crosshairAR.SetActive(false);
+            crosshairGL.crosshairGL.SetActive(true);
         }
     }
 
@@ -68,13 +81,13 @@ public class WeaponManager : MonoBehaviour
     private void CancelPreAction()
     {
         
-        switch (weaponNum)
+        switch (currentWeapon.name)
         {
-            case 1:
+            case "AssaultRifle":
                 rifleControl.CancelAim();
                 rifleControl.CancelReload();
                 break;
-            case 2:
+            case "GrenadeLauncher":
                 gLControl.CancelReload();
                 break;
         }

@@ -18,8 +18,6 @@ public class GLControl : MonoBehaviour
     private float currentFireRate;
     //상태 변수
     private bool isReload = false;
-    [HideInInspector]
-    public bool isAimMode = false;
 
     //원래 포지션 값
     private Vector3 originPos;
@@ -88,51 +86,32 @@ public class GLControl : MonoBehaviour
         currentRifle.muzzleFlash.Play();
         audio.Play();
         player.animator.SetTrigger("Shoot");
-        if (!isAimMode)
-            crosshair.FireAnimation();
         //총기 반동 코루틴
         StopAllCoroutines();
         StartCoroutine(RetroactionCoroutine());
     }
-   
+
     IEnumerator RetroactionCoroutine()
     {
         Vector3 recoilBack = new Vector3(originPos.x, originPos.y, -currentRifle.resistForce);
         Vector3 aimRecoilBack = new Vector3(currentRifle.getAimOriginPos().x, currentRifle.getAimOriginPos().y, -currentRifle.resistAimForce);
-        if (!isAimMode)
-        {
-            currentRifle.transform.localPosition = originPos;
 
-            //반동
-            while (currentRifle.transform.localPosition.z > -currentRifle.resistForce + 0.02f)
-            {
-                currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, recoilBack, 0.4f);
-                yield return null;
-            }
-            //원위치
-            while (currentRifle.transform.localPosition.z < originPos.z - 0.02f)
-            {
-                currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, originPos, 0.1f);
-                yield return null;
-            }
-        }
-        else
-        {
-            currentRifle.transform.localPosition = currentRifle.getAimOriginPos();
+        currentRifle.transform.localPosition = originPos;
 
-            //반동
-            while (currentRifle.transform.localPosition.z > -currentRifle.resistAimForce + 0.02f)
-            {
-                currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, aimRecoilBack, 0.4f);
-                yield return null;
-            }
-            //원위치
-            while (currentRifle.transform.localPosition.z < currentRifle.getAimOriginPos().z - 0.02f)
-            {
-                currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, currentRifle.getAimOriginPos(), 0.1f);
-                yield return null;
-            }
+        //반동
+        while (currentRifle.transform.localPosition.z > -currentRifle.resistForce + 0.02f)
+        {
+            currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, recoilBack, 0.4f);
+            yield return null;
         }
+        //원위치
+        while (currentRifle.transform.localPosition.z < originPos.z - 0.02f)
+        {
+            currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, originPos, 0.1f);
+            yield return null;
+        }
+
+
     }
 
     //재장전 시도
@@ -183,15 +162,12 @@ public class GLControl : MonoBehaviour
         }
     }
     //정조준 시도
-    
+
     public Rifle GetRifle()
     {
         return this.currentRifle;
     }
-    public bool GetAimMode()
-    {
-        return isAimMode;
-    }
+
     public void GunChange(Rifle gun)
     {
         if (WeaponManager.currentWeapon != null)

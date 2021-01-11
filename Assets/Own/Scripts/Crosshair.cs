@@ -10,9 +10,8 @@ public class Crosshair : MonoBehaviour
     private float rifleAccuracy;
 
     //크로스헤어 활성화, 비활성화
-    [SerializeField]
-    private GameObject crosshairHUD;
-    
+    public GameObject crosshairAR;
+
 
     public void WalkAnimation(bool flag)
     {
