@@ -8,10 +8,11 @@ public class Crosshair : MonoBehaviour
     private Animator animator;
 
     private float rifleAccuracy;
-
+    private float gunAccuracy;
     //크로스헤어 활성화, 비활성화
     public GameObject crosshairAR;
-
+    [SerializeField]
+    private RifleControl rifleControl;
 
     public void WalkAnimation(bool flag)
     {
@@ -39,5 +40,20 @@ public class Crosshair : MonoBehaviour
             animator.SetTrigger("JumpFire");
         else
             animator.SetTrigger("IdleFire");
+    }
+    public float getAccuracy()
+    {
+        if (rifleControl.GetAimMode())
+            rifleAccuracy = 0.001f;
+        else if (animator.GetBool("Walk"))
+            rifleAccuracy = 0.04f;
+        else if (animator.GetBool("Run"))
+            rifleAccuracy = 0.06f;
+        else if (animator.GetBool("Jump"))
+            rifleAccuracy = 0.07f;
+        else
+            rifleAccuracy = 0.02f;
+
+        return rifleAccuracy;
     }
 }

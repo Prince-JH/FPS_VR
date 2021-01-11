@@ -7,10 +7,5 @@ public class Rifle : Gun
 
     public float accuracy;
     public float fireRate;
-    
 
-
-
-
- 
 }

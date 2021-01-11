@@ -58,7 +58,7 @@ public class WeaponManager : MonoBehaviour
             crosshairAR.crosshairAR.SetActive(true);
             crosshairGL.crosshairGL.SetActive(false);
         }
-        else if(currentWeapon.name == "GrenadeLauncher")
+        else if (currentWeapon.name == "GrenadeLauncher")
         {
             crosshairAR.crosshairAR.SetActive(false);
             crosshairGL.crosshairGL.SetActive(true);
@@ -73,14 +73,14 @@ public class WeaponManager : MonoBehaviour
         yield return new WaitForSeconds(changeWeaponDelayTime);
 
         CancelPreAction();
-        WeaponChange(name);
+        StartCoroutine(WeaponChange(name));
 
         yield return new WaitForSeconds(changeWeaponTime);
         isChangeWeapon = false;
     }
     private void CancelPreAction()
     {
-        
+
         switch (currentWeapon.name)
         {
             case "AssaultRifle":
@@ -91,11 +91,13 @@ public class WeaponManager : MonoBehaviour
                 gLControl.CancelReload();
                 break;
         }
-        
-        
+
+
     }
-    private void WeaponChange(string name)
+    IEnumerator WeaponChange(string name)
     {
+        while (!rifleControl.zoomOutComplete)
+            yield return null;
         rifleControl.GunChange(rifleDic[name]);
     }
 }

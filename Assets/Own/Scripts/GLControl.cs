@@ -31,13 +31,11 @@ public class GLControl : MonoBehaviour
     [SerializeField]
     private Camera theCam;
 
-    //크로스헤어
-    [SerializeField]
-    private Crosshair crosshair;
+
     [SerializeField]
     private GameObject grenade;
     [SerializeField]
-    private GameObject gl;
+    private GameObject gL;
     private Vector3 target;
     private void Start()
     {
@@ -73,16 +71,16 @@ public class GLControl : MonoBehaviour
     //타겟 체인지
     private void TargetChange()
     {
-        target = gl.transform.rotation * Vector3.forward * 50;
+        target = gL.transform.rotation * Vector3.forward * 50;
     }
     //발사
     private void Shoot()
     {
         currentRifle.currentBulletCount--;
-        GameObject go = Instantiate(grenade, gl.transform.position, gl.transform.rotation);
-        Rigidbody rig = go.GetComponent<Rigidbody>();
+        GameObject bullet = Instantiate(grenade, gL.transform.position, gL.transform.rotation);
+        Rigidbody rig = bullet.GetComponent<Rigidbody>();
         rig.AddForce(target, ForceMode.Impulse);
-        Destroy(go, 0.6f);
+        Destroy(bullet, 0.6f);
         currentRifle.muzzleFlash.Play();
         audio.Play();
         player.animator.SetTrigger("Shoot");

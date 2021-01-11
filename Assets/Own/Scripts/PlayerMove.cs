@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    [SerializeField]
     private Gun currentRifle;
     //플레이어 이동 관련 변수
 
@@ -38,6 +37,8 @@ public class PlayerMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;//마우스 커서 고정
+        Cursor.visible = false;
         rig = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         animator = GetComponent<Animator>();
@@ -49,6 +50,7 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        currentRifle = WeaponManager.currentWeapon;
         IsGround();
         Move();
         Run();

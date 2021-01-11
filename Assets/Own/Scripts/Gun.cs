@@ -17,7 +17,6 @@ public class Gun : MonoBehaviour
 
     public Animator animator;
     public ParticleSystem muzzleFlash;
-    public AudioClip fireSound;
     protected Vector3 aimOriginPos = new Vector3(-0.14f, 0.059f, -0.11f);
 
     public Vector3 getAimOriginPos()

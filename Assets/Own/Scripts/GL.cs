@@ -5,6 +5,6 @@ using UnityEngine;
 public class GL : Rifle
 {
     [SerializeField]
-    private float explosionRange;
+    public float explosionRange;
     
 }

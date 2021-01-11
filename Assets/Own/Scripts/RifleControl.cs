@@ -20,7 +20,8 @@ public class RifleControl : MonoBehaviour
     private bool isReload = false;
     [HideInInspector]
     public bool isAimMode = false;
-
+    [HideInInspector]
+    public bool zoomOutComplete = false;
     //원래 포지션 값
     private Vector3 originPos;
 
@@ -35,7 +36,9 @@ public class RifleControl : MonoBehaviour
 
     //피격 이펙트
     [SerializeField]
-    private GameObject hit_effect_prefab;
+    private GameObject hitEffect;
+    [SerializeField]
+    private GameObject mapHitEffect;
     //크로스헤어
     [SerializeField]
     private Crosshair crosshair;
@@ -53,6 +56,7 @@ public class RifleControl : MonoBehaviour
         Fire();
         TryReload();
         TryAim();
+        ZoomOutCheck();
     }
     //연사속도 재계산
     private void RifleFireRateCalc()
@@ -96,10 +100,22 @@ public class RifleControl : MonoBehaviour
     //피격
     private void Hit()
     {
-        if(Physics.Raycast(theCam.transform.position, theCam.transform.forward, out hitInfo, currentRifle.range))
+        if(Physics.Raycast(theCam.transform.position, theCam.transform.forward +
+            new Vector3(Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy)
+            , Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy), 0)
+            , out hitInfo, currentRifle.range))
         {
-            GameObject clone = Instantiate(hit_effect_prefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
-            Destroy(clone, 1f);
+            if(hitInfo.transform.tag == "Enemy")
+            {
+                GameObject clone = Instantiate(hitEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
+                Destroy(clone, 1f);
+                hitInfo.transform.GetComponent<Enemy>().hp--;
+            }
+            else if (hitInfo.transform.tag == "Map")
+            {
+                GameObject clone = Instantiate(mapHitEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
+                Destroy(clone, 1f);
+            }
         }
     }
     IEnumerator RetroactionCoroutine()
@@ -231,9 +247,9 @@ public class RifleControl : MonoBehaviour
         while (currentRifle.transform.localPosition != currentRifle.getAimOriginPos())
         {
             currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, currentRifle.getAimOriginPos(), 0.2f);
-            
+            yield return null;
         }
-        yield return null;
+        
     }
     //정조준 비활성화
     IEnumerator ButtstockCoroutine()
@@ -241,8 +257,9 @@ public class RifleControl : MonoBehaviour
         while (currentRifle.transform.localPosition != originPos)
         {
             currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, originPos, 0.2f);
+            yield return null;
         }
-        yield return null;
+        
         
     }
     IEnumerator ZoomIn()
@@ -281,6 +298,13 @@ public class RifleControl : MonoBehaviour
             yield return null;
         }
         
+    }
+    private void ZoomOutCheck()
+    {
+        if (theCam.nearClipPlane >= 0.265f && theCam.fieldOfView >= 59.5f)
+            zoomOutComplete = true;
+        else
+            zoomOutComplete = false;
     }
     public Rifle GetRifle()
     {
