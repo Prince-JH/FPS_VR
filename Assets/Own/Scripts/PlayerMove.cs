@@ -83,7 +83,7 @@ public class PlayerMove : MonoBehaviour
     //달리기
     private void Run()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && isWalk)
         {
             isWalk = false;
             isRun = true;

@@ -13,7 +13,12 @@ public class RifleControl : MonoBehaviour
     //플레이어
     [SerializeField]
     private PlayerMove player;
-    
+    //총알
+    [SerializeField]
+    private GameObject bullet;
+    private Transform bulletPos;
+    //발사 방향
+    private Vector3 bulletDir;
     //연사 속도 계산
     private float currentFireRate;
     //상태 변수
@@ -24,12 +29,12 @@ public class RifleControl : MonoBehaviour
     public bool zoomOutComplete = false;
     //원래 포지션 값
     private Vector3 originPos;
-
+    
     //효과음 재생
     private AudioSource audio;
     //레이저 충돌 정보
     private RaycastHit hitInfo;
-
+    
     //필요 컴포넌트
     [SerializeField]
     private Camera theCam;
@@ -46,6 +51,7 @@ public class RifleControl : MonoBehaviour
     {
         originPos = Vector3.zero;
         audio = GetComponent<AudioSource>();
+        bulletPos = GameObject.Find("RifleMuzzleFlash").transform;
 
         WeaponManager.currentWeapon = currentRifle;
         WeaponManager.currentWeaponAnimator = currentRifle.animator;
@@ -53,10 +59,23 @@ public class RifleControl : MonoBehaviour
     private void Update()
     {
         RifleFireRateCalc();
+        FireDirection();
         Fire();
         TryReload();
         TryAim();
         ZoomOutCheck();
+    }
+
+    //발사 방향
+    private void FireDirection()
+    {
+        bulletDir = theCam.transform.forward +
+            new Vector3(Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy)
+            , Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy), 0);
+    }
+    public Vector3 getFiredDirection()
+    {
+        return bulletDir;
     }
     //연사속도 재계산
     private void RifleFireRateCalc()
@@ -89,6 +108,7 @@ public class RifleControl : MonoBehaviour
         currentFireRate = currentRifle.fireRate;
         currentRifle.muzzleFlash.Play();
         audio.Play();
+        StartCoroutine(ShootBullet());
         Hit();
         player.animator.SetTrigger("Shoot");
         if (!isAimMode)
@@ -97,13 +117,16 @@ public class RifleControl : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(RetroactionCoroutine());
     }
+    IEnumerator ShootBullet()
+    {
+        GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
+        Destroy(bulletClone, 0.5f);
+        yield return null;
+    }
     //피격
     private void Hit()
     {
-        if(Physics.Raycast(theCam.transform.position, theCam.transform.forward +
-            new Vector3(Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy)
-            , Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy), 0)
-            , out hitInfo, currentRifle.range))
+        if(Physics.Raycast(theCam.transform.position, bulletDir, out hitInfo, currentRifle.range))
         {
             if(hitInfo.transform.tag == "Enemy")
             {

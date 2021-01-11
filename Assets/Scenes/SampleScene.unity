@@ -282,6 +282,7 @@ MonoBehaviour:
   currentRifle: {fileID: 1008368710}
   reloadSound: {fileID: 1668613472}
   player: {fileID: 1312992308}
+  bullet: {fileID: 7871610512598145959, guid: d4c984c943ef3664e930feed83e19a18, type: 3}
   isAimMode: 0
   zoomOutComplete: 0
   theCam: {fileID: 2055956017}
@@ -508,7 +509,7 @@ PrefabInstance:
     - target: {fileID: 1999571631755239560, guid: 3065108a229c3994b89c57a3f9710754,
         type: 3}
       propertyPath: m_Name
-      value: MuzzleFlash
+      value: RifleMuzzleFlash
       objectReference: {fileID: 0}
     - target: {fileID: 1999571631755239561, guid: 3065108a229c3994b89c57a3f9710754,
         type: 3}
@@ -1478,7 +1479,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 1
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -8399,7 +8400,7 @@ PrefabInstance:
     - target: {fileID: 3359425344854695953, guid: 0b6ea3d6750360e429c33889a44b9e16,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3359425344854695953, guid: 0b6ea3d6750360e429c33889a44b9e16,
         type: 3}
@@ -10187,7 +10188,7 @@ PrefabInstance:
     - target: {fileID: 1999571631755239560, guid: 3065108a229c3994b89c57a3f9710754,
         type: 3}
       propertyPath: m_Name
-      value: MuzzleFlash
+      value: GLMuzzleFlash
       objectReference: {fileID: 0}
     - target: {fileID: 1999571631755239561, guid: 3065108a229c3994b89c57a3f9710754,
         type: 3}
@@ -13401,7 +13402,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1731900311 stripped
 Transform:
