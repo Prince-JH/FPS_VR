@@ -6,7 +6,7 @@ public class PlayerMove : MonoBehaviour
 {
     private Gun currentRifle;
     //플레이어 이동 관련 변수
-
+    
     [SerializeField]
     private float walkSpeed;
     [SerializeField]
@@ -15,6 +15,10 @@ public class PlayerMove : MonoBehaviour
     private float speed;
     private Vector3 lastPos;
     private Vector3 velocity;
+
+    //체력
+    [HideInInspector]
+    public static int healthPoint = 10;
 
     //상태 변수
     private bool isWalk;

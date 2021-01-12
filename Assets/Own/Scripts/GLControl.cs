@@ -127,7 +127,7 @@ public class GLControl : MonoBehaviour
         {
             isReload = true;
             currentRifle.animator.SetTrigger("Reload");
-            reloadSound.isPlay = true;
+            reloadSound.ReloadSoundPlay();
 
             yield return new WaitForSeconds(currentRifle.reloadTime);
             currentRifle.carryBulletCount += currentRifle.currentBulletCount;
@@ -166,6 +166,7 @@ public class GLControl : MonoBehaviour
         return this.currentRifle;
     }
 
+
     public void GunChange(Rifle gun)
     {
         if (WeaponManager.currentWeapon != null)
@@ -175,7 +176,7 @@ public class GLControl : MonoBehaviour
         currentRifle = gun;
         WeaponManager.currentWeapon = currentRifle;
         WeaponManager.currentWeaponAnimator = currentRifle.animator;
-
+        reloadSound.ReloadSoundStop();
         currentRifle.transform.localPosition = Vector3.zero;
         currentRifle.gameObject.transform.parent.gameObject.SetActive(true);
     }

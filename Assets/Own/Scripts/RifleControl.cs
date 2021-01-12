@@ -131,13 +131,13 @@ public class RifleControl : MonoBehaviour
             if(hitInfo.transform.tag == "Enemy")
             {
                 GameObject clone = Instantiate(hitEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
-                Destroy(clone, 1f);
+                Destroy(clone, 0.5f);
                 hitInfo.transform.GetComponent<Enemy>().hp--;
             }
             else if (hitInfo.transform.tag == "Map")
             {
                 GameObject clone = Instantiate(mapHitEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
-                Destroy(clone, 1f);
+                Destroy(clone, 0.5f);
             }
         }
     }
@@ -197,7 +197,7 @@ public class RifleControl : MonoBehaviour
         {
             isReload = true;
             currentRifle.animator.SetTrigger("Reload");
-            reloadSound.isPlay = true;
+            reloadSound.ReloadSoundPlay();
 
             yield return new WaitForSeconds(currentRifle.reloadTime);
             currentRifle.carryBulletCount += currentRifle.currentBulletCount;
@@ -346,6 +346,7 @@ public class RifleControl : MonoBehaviour
         currentRifle = gun;
         WeaponManager.currentWeapon = currentRifle;
         WeaponManager.currentWeaponAnimator = currentRifle.animator;
+        reloadSound.ReloadSoundStop();
 
         currentRifle.transform.localPosition = Vector3.zero;
         currentRifle.gameObject.transform.parent.gameObject.SetActive(true);
