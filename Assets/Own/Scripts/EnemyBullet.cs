@@ -8,10 +8,14 @@ public class EnemyBullet : MonoBehaviour
     private Rigidbody rig;
     //라이트
     private GameObject light;
+    private Animator lightAnimator;
+    private GameObject player;
     void Start()
     {
         light = GameObject.Find("Sun");
         rig = GetComponent<Rigidbody>();
+        lightAnimator = light.GetComponent<Animator>();
+        player = GameObject.Find("Player");
     }
 
     // Update is called once per frame
@@ -24,8 +28,18 @@ public class EnemyBullet : MonoBehaviour
     {
         if (collision.gameObject.transform.tag == "Player")
         {
-            
+            lightAnimator.SetTrigger("Hit");
+            OnDamaged();
         }
     }
-    
+    private void OnDamaged()
+    {
+        PlayerMove.healthPoint--;
+        player.gameObject.layer = 13;
+        Invoke("OffDamaged", 1f);
+    }
+    private void OffDamaged()
+    {
+        player.gameObject.layer = 12;
+    }
 }

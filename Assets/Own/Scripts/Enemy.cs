@@ -14,8 +14,7 @@ public class Enemy : MonoBehaviour
     //탐지
     [SerializeField]
     private Transform enemyBody;
-    private float observeRange = 25f;
-    private float attackRange = 22f;
+    private float observeRange = 30f;
     [SerializeField]
     private LayerMask layerMask;
     private bool isSearch = false;
@@ -82,12 +81,15 @@ public class Enemy : MonoBehaviour
 
         if (cols.Length > 0)
         {
-            foreach (Collider targetCol in cols)
+            Transform targetTemp = cols[0].transform;
+            
+            Vector3 targetDirection = (targetTemp.position - transform.position).normalized;
+            if (Physics.Raycast(transform.position, targetDirection, out RaycastHit targetHit, observeRange))
             {
-                if (targetCol.gameObject.transform.tag == "Player")
+                if (targetHit.transform.tag == "Player")
                 {
                     isSearch = true;
-                    target = targetCol.gameObject.transform;
+                    target = targetTemp;
                 }
             }
         }
@@ -108,11 +110,9 @@ public class Enemy : MonoBehaviour
         {
             isWalk = true;
             animator.SetBool("Walk", isWalk);
-            enemy.speed = 3.5f;
         }
         else
         {
-            enemy.speed = 0.01f;
             isWalk = false;
             animator.SetBool("Walk", false);
         }
@@ -128,7 +128,7 @@ public class Enemy : MonoBehaviour
                     target = null;
                     isSearch = false;
                 }
-                else if (Vector3.Distance(enemyBody.position, target.position) <= attackRange)
+                else if (Vector3.Distance(enemyBody.position, target.position) <= observeRange)
                 {
                     enemyBody.LookAt(target);
                     enemy.velocity = Vector3.zero;
@@ -142,17 +142,16 @@ public class Enemy : MonoBehaviour
     }
     IEnumerator EnemyShoot()
     {
-        if(isShoot)
+        if (isShoot)
         {
             muzzleFlash.Play();
             GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
-            Destroy(bulletClone, 0.8f);
-            PlayerMove.healthPoint--;
+            Destroy(bulletClone, 1.5f);
             isShoot = false;
             gunSound.GetComponent<AudioSource>().Play();
             yield return new WaitForSeconds(fireRate);
             isShoot = true;
         }
     }
-    
+
 }

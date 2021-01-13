@@ -13,7 +13,6 @@ public class PlayerMove : MonoBehaviour
     private float runSpeed;
     private float jumpForce = 8.5f;
     private float speed;
-    private Vector3 lastPos;
     private Vector3 velocity;
 
     //체력

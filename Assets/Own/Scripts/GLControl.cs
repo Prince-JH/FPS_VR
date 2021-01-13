@@ -80,7 +80,7 @@ public class GLControl : MonoBehaviour
         GameObject bullet = Instantiate(grenade, gL.transform.position, gL.transform.rotation);
         Rigidbody rig = bullet.GetComponent<Rigidbody>();
         rig.AddForce(target, ForceMode.Impulse);
-        Destroy(bullet, 0.6f);
+        Destroy(bullet, 1.1f);
         currentRifle.muzzleFlash.Play();
         audio.Play();
         player.animator.SetTrigger("Shoot");
