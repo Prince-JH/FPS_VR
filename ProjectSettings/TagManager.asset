@@ -26,9 +26,9 @@ TagManager:
   - Terrain
   - Enemy
   - Player
-  - 
-  - 
-  - 
+  - PlayerDamaged
+  - EnemyBullet
+  - Potion
   - 
   - 
   - 

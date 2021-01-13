@@ -17,7 +17,7 @@ public class PlayerMove : MonoBehaviour
 
     //체력
     [HideInInspector]
-    public static int healthPoint = 10;
+    public static int healthPoint = 100;
 
     //상태 변수
     private bool isWalk;

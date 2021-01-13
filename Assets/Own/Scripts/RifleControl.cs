@@ -47,11 +47,13 @@ public class RifleControl : MonoBehaviour
     //크로스헤어
     [SerializeField]
     private Crosshair crosshair;
+    private NoBulletSound noBulletSound;
     private void Start()
     {
         originPos = Vector3.zero;
         audio = GetComponent<AudioSource>();
         bulletPos = GameObject.Find("RifleMuzzleFlash").transform;
+        noBulletSound = FindObjectOfType<NoBulletSound>();
 
         WeaponManager.currentWeapon = currentRifle;
         WeaponManager.currentWeaponAnimator = currentRifle.animator;
@@ -217,7 +219,7 @@ public class RifleControl : MonoBehaviour
         }
         else
         {
-            Debug.Log("총알 없음");
+            noBulletSound.SoundPlay();
         }
     }
     //재장전 취소

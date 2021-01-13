@@ -15,7 +15,6 @@ public class PlayerDead : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(PlayerMove.healthPoint);
         if (PlayerMove.healthPoint <= 0 && deadSound.canPlay)
         {
             animaotr.SetBool("Dead", true);

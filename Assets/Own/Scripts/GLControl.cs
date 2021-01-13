@@ -37,10 +37,12 @@ public class GLControl : MonoBehaviour
     [SerializeField]
     private GameObject gL;
     private Vector3 target;
+    private NoBulletSound noBulletSound;
     private void Start()
     {
         originPos = Vector3.zero;
         audio = GetComponent<AudioSource>();
+        noBulletSound = FindObjectOfType<NoBulletSound>();
 
         WeaponManager.currentWeapon = currentRifle;
         WeaponManager.currentWeaponAnimator = currentRifle.animator;
@@ -147,7 +149,7 @@ public class GLControl : MonoBehaviour
         }
         else
         {
-            Debug.Log("총알 없음");
+            noBulletSound.SoundPlay();
         }
     }
     //재장전 취소

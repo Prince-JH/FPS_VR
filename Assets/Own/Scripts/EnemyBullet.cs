@@ -34,7 +34,7 @@ public class EnemyBullet : MonoBehaviour
     }
     private void OnDamaged()
     {
-        PlayerMove.healthPoint--;
+        PlayerMove.healthPoint -= 10;
         player.gameObject.layer = 13;
         Invoke("OffDamaged", 1f);
     }
