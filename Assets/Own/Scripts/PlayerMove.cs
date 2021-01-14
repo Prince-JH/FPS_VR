@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class PlayerMove : MonoBehaviour
     private bool isWalk;
     private bool isRun;
     private bool isGround = true;
+    private bool isDead;
 
     //카메라
     private float lookSensitivity = 2.5f;
@@ -37,6 +39,12 @@ public class PlayerMove : MonoBehaviour
     [HideInInspector]
     public Animator animator;
     private Crosshair crosshair;
+    [SerializeField]
+    private DeadSound deadSound;
+    [SerializeField]
+    private Camera deadCam;
+    [SerializeField]
+    private Image gameOver;
     // Start is called before the first frame update
     void Start()
     {
@@ -60,6 +68,7 @@ public class PlayerMove : MonoBehaviour
         Jump();
         RotateLR();
         RotateUD();
+        KilledInAction();
     }
     //플레이어 이동
     private void Move()
@@ -116,18 +125,39 @@ public class PlayerMove : MonoBehaviour
     //카메라 좌우 회전(캐릭터 회전)
     private void RotateLR()
     {
-        float yRotation = Input.GetAxisRaw("Mouse X");
-        Vector3 rotateLR = new Vector3(0f, yRotation, 0f) * lookSensitivity;
-        rig.MoveRotation(rig.rotation * Quaternion.Euler(rotateLR));
+        if(!isDead && !GameManager.isPause)
+        {
+            float yRotation = Input.GetAxisRaw("Mouse X");
+            Vector3 rotateLR = new Vector3(0f, yRotation, 0f) * lookSensitivity;
+            rig.MoveRotation(rig.rotation * Quaternion.Euler(rotateLR));
+        }
     }
     //카메라 위 아래 회전(카메라 회전)
     private void RotateUD()
     {
-        float xRotation = Input.GetAxisRaw("Mouse Y");
-        float rotateUD = xRotation * lookSensitivity;
-        currentCameraRotationX -= rotateUD;
-        currentCameraRotationX = Mathf.Clamp(currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit);
+        if(!isDead && !GameManager.isPause)
+        {
+            float xRotation = Input.GetAxisRaw("Mouse Y");
+            float rotateUD = xRotation * lookSensitivity;
+            currentCameraRotationX -= rotateUD;
+            currentCameraRotationX = Mathf.Clamp(currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit);
 
-        cam.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0, 0);
+            cam.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0, 0);
+        }
+    }
+    private void KilledInAction()
+    {
+        if (healthPoint <= 0 && deadSound.canPlay)
+        {
+            animator.SetTrigger("Dead");
+            deadSound.DeadSoundPlay();
+            cam.gameObject.SetActive(false);
+            deadCam.gameObject.SetActive(true);
+            isDead = true;
+            rig.isKinematic = true;
+            gameOver.gameObject.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;//마우스 커서 고정 해제
+            Cursor.visible = true;
+        }
     }
 }

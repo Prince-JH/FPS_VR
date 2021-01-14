@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Potion : MonoBehaviour
+public class PotionRed : MonoBehaviour
 {
     private PotionSound potionSound;
     private void Start()

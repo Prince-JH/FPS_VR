@@ -60,12 +60,15 @@ public class RifleControl : MonoBehaviour
     }
     private void Update()
     {
-        RifleFireRateCalc();
-        FireDirection();
-        Fire();
-        TryReload();
-        TryAim();
-        ZoomOutCheck();
+        if(!GameManager.isPause)
+        {
+            RifleFireRateCalc();
+            FireDirection();
+            Fire();
+            TryReload();
+            TryAim();
+            ZoomOutCheck();
+        }
     }
 
     //발사 방향
@@ -111,7 +114,7 @@ public class RifleControl : MonoBehaviour
         currentRifle.muzzleFlash.Play();
         audio.Play();
         StartCoroutine(ShootBullet());
-        Hit();
+        //Hit();
         player.animator.SetTrigger("Shoot");
         if (!isAimMode)
             crosshair.FireAnimation();
@@ -122,7 +125,7 @@ public class RifleControl : MonoBehaviour
     IEnumerator ShootBullet()
     {
         GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
-        Destroy(bulletClone, 0.5f);
+        Destroy(bulletClone, 2.0f);
         yield return null;
     }
     //피격
@@ -135,6 +138,7 @@ public class RifleControl : MonoBehaviour
                 GameObject clone = Instantiate(hitEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
                 Destroy(clone, 0.5f);
                 hitInfo.transform.GetComponent<Enemy>().hp--;
+                hitInfo.transform.GetComponent<Animator>().SetTrigger("Hit");
             }
             else if (hitInfo.transform.tag == "Map")
             {

@@ -42,26 +42,29 @@ public class WeaponManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isChangeWeapon)
+        if(!GameManager.isPause)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1) && currentWeapon.name == "GrenadeLauncher")
+            if (!isChangeWeapon)
             {
-                StartCoroutine(ChangeWeaponCoroutine("AssaultRifle"));
+                if (Input.GetKeyDown(KeyCode.Alpha1) && currentWeapon.name == "GrenadeLauncher")
+                {
+                    StartCoroutine(ChangeWeaponCoroutine("AssaultRifle"));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha2) && currentWeapon.name == "AssaultRifle")
+                {
+                    StartCoroutine(ChangeWeaponCoroutine("GrenadeLauncher"));
+                }
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha2) && currentWeapon.name == "AssaultRifle")
+            if (currentWeapon.name == "AssaultRifle")
             {
-                StartCoroutine(ChangeWeaponCoroutine("GrenadeLauncher"));
+                crosshairAR.crosshairAR.SetActive(true);
+                crosshairGL.crosshairGL.SetActive(false);
             }
-        }
-        if (currentWeapon.name == "AssaultRifle")
-        {
-            crosshairAR.crosshairAR.SetActive(true);
-            crosshairGL.crosshairGL.SetActive(false);
-        }
-        else if (currentWeapon.name == "GrenadeLauncher")
-        {
-            crosshairAR.crosshairAR.SetActive(false);
-            crosshairGL.crosshairGL.SetActive(true);
+            else if (currentWeapon.name == "GrenadeLauncher")
+            {
+                crosshairAR.crosshairAR.SetActive(false);
+                crosshairGL.crosshairGL.SetActive(true);
+            }
         }
     }
 

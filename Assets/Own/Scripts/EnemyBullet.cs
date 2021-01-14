@@ -10,6 +10,8 @@ public class EnemyBullet : MonoBehaviour
     private GameObject light;
     private Animator lightAnimator;
     private GameObject player;
+
+
     void Start()
     {
         light = GameObject.Find("Sun");
@@ -22,6 +24,8 @@ public class EnemyBullet : MonoBehaviour
     void Update()
     {
         rig.AddForce(gameObject.transform.localRotation * Vector3.forward * speed + new Vector3(10, 0, 0));
+        if (PlayerMove.healthPoint <= 0)
+            lightAnimator.enabled = false;
     }
     
     private void OnCollisionEnter(Collision collision)
@@ -34,9 +38,10 @@ public class EnemyBullet : MonoBehaviour
     }
     private void OnDamaged()
     {
-        PlayerMove.healthPoint -= 10;
+        Invoke("OffDamaged", 1);
         player.gameObject.layer = 13;
-        Invoke("OffDamaged", 1f);
+        PlayerMove.healthPoint -= 10;
+        
     }
     private void OffDamaged()
     {

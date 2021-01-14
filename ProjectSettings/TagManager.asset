@@ -12,6 +12,7 @@ TagManager:
   - WeaponCam
   - Enemy
   - Map
+  - EnemyHead
   layers:
   - Default
   - TransparentFX
@@ -29,8 +30,8 @@ TagManager:
   - PlayerDamaged
   - EnemyBullet
   - Potion
-  - 
-  - 
+  - Bullet
+  - EnemyHead
   - 
   - 
   - 

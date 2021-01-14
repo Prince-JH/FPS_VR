@@ -29,6 +29,10 @@ public class Enemy : MonoBehaviour
     private Transform bulletPos;
     [SerializeField]
     private GameObject gunSound;
+    [SerializeField]
+    private GameObject potionRed;
+    [SerializeField]
+    private GameObject potionYellow;
 
     [HideInInspector]
     public int hp = 3;
@@ -69,13 +73,30 @@ public class Enemy : MonoBehaviour
             animator.SetTrigger("Explode");
         else
             animator.SetTrigger("Dead");
+        DropPotion();
         yield return new WaitForSeconds(2);
         gameObject.SetActive(false);
         logFlag = true;
     }
+    private void DropPotion()
+    {
+        int potionRedNum = 3;
+        int potionYellowNum = 4;
+        int num = Random.Range(0, 5);
+        if(num == potionRedNum)
+        {
+            Instantiate(potionRed, transform.position, transform.rotation);
+        }
+        else if(num == potionYellowNum)
+        {
+            Instantiate(potionYellow, transform.position, transform.rotation);
+        }
 
+    }
     private void SearchEnemy()
     {
+        if (PlayerMove.healthPoint <= 0)
+            return;
         //주변의 collider 검출
         Collider[] cols = Physics.OverlapSphere(transform.position, observeRange, layerMask);
 
@@ -139,6 +160,8 @@ public class Enemy : MonoBehaviour
                     enemy.SetDestination(target.position);
             }
         }
+        if (PlayerMove.healthPoint <= 0)
+            target = null;
     }
     IEnumerator EnemyShoot()
     {
@@ -146,7 +169,7 @@ public class Enemy : MonoBehaviour
         {
             muzzleFlash.Play();
             GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
-            Destroy(bulletClone, 1.5f);
+            Destroy(bulletClone, 2.0f);
             isShoot = false;
             gunSound.GetComponent<AudioSource>().Play();
             yield return new WaitForSeconds(fireRate);

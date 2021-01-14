@@ -49,9 +49,12 @@ public class GLControl : MonoBehaviour
     }
     private void Update()
     {
-        TargetChange();
-        Fire();
-        TryReload();
+        if (!GameManager.isPause)
+        {
+            TargetChange();
+            Fire();
+            TryReload();
+        }
     }
 
     //발사 시도
