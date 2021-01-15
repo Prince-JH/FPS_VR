@@ -46,8 +46,6 @@ public class Enemy : MonoBehaviour
         killLog = FindObjectOfType<KillLog>();
         enemy = GetComponent<NavMeshAgent>();
         bulletPos = muzzleFlash.transform;
-
-        InvokeRepeating("SearchEnemy", 0f, 0.5f);
     }
 
     // Update is called once per frame
@@ -65,17 +63,21 @@ public class Enemy : MonoBehaviour
     }
     IEnumerator Dead()
     {
+        GameManager.kill++;
         enemy.enabled = false;
         logFlag = false;
         if (hp <= 0)
             killLog.Show();
         if (hp <= -20)
             animator.SetTrigger("Explode");
+        else if (hp <= -10)
+            animator.SetTrigger("HeadShot");
         else
             animator.SetTrigger("Dead");
         DropPotion();
         yield return new WaitForSeconds(2);
-        gameObject.SetActive(false);
+        Destroy(gameObject);
+        GameManager.enemyCount--;
         logFlag = true;
     }
     private void DropPotion()
@@ -93,31 +95,9 @@ public class Enemy : MonoBehaviour
         }
 
     }
-    private void SearchEnemy()
-    {
-        if (PlayerMove.healthPoint <= 0)
-            return;
-        //주변의 collider 검출
-        Collider[] cols = Physics.OverlapSphere(transform.position, observeRange, layerMask);
-
-        if (cols.Length > 0)
-        {
-            Transform targetTemp = cols[0].transform;
-            
-            Vector3 targetDirection = (targetTemp.position - transform.position).normalized;
-            if (Physics.Raycast(transform.position, targetDirection, out RaycastHit targetHit, observeRange))
-            {
-                if (targetHit.transform.tag == "Player")
-                {
-                    isSearch = true;
-                    target = targetTemp;
-                }
-            }
-        }
-    }
     private void MoveToNextWayPoint()
     {
-        if (enemy.velocity == Vector3.zero && enemy.enabled && !isSearch)
+        if (enemy.velocity == Vector3.zero && enemy.enabled && target == null)
         {
             enemy.SetDestination(wayPoints[count++].position);
 
@@ -144,10 +124,18 @@ public class Enemy : MonoBehaviour
         {
             if (isSearch && enemy.enabled)
             {
+                enemyBody.LookAt(target);
+                enemy.velocity = Vector3.zero;
+                animator.SetTrigger("Shoot");
+                StartCoroutine(EnemyShoot());
+                /*
                 if (Vector3.Distance(enemyBody.position, target.position) >= observeRange)
                 {
+                    enemy.SetDestination(target.transform.position);
+                    
                     target = null;
                     isSearch = false;
+                    
                 }
                 else if (Vector3.Distance(enemyBody.position, target.position) <= observeRange)
                 {
@@ -158,6 +146,7 @@ public class Enemy : MonoBehaviour
                 }
                 else if (isWalk)
                     enemy.SetDestination(target.position);
+            */
             }
         }
         if (PlayerMove.healthPoint <= 0)
@@ -169,11 +158,48 @@ public class Enemy : MonoBehaviour
         {
             muzzleFlash.Play();
             GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
-            Destroy(bulletClone, 2.0f);
+            Destroy(bulletClone, 2.5f);
             isShoot = false;
             gunSound.GetComponent<AudioSource>().Play();
             yield return new WaitForSeconds(fireRate);
             isShoot = true;
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.transform.tag == "Player") 
+        {
+            target = other.transform;
+            if (PlayerMove.healthPoint == 0)
+                target = null;
+            TargetVisible();
+        }
+    }
+    private void TargetVisible()
+    {
+        if(target != null && enemy.enabled)
+        {
+            Vector3 targetDirection = (target.position - transform.position).normalized;
+            if (Physics.Raycast(transform.position + new Vector3(0, 1, 0), targetDirection, out RaycastHit rayHit, observeRange))
+            {
+                
+                Debug.DrawRay(transform.position + new Vector3(0, 1, 0), targetDirection * 10f, Color.green);
+                if (rayHit.transform.tag != "Player")
+                {
+                    isSearch = false;
+                    enemy.SetDestination(target.position);
+                }
+                else
+                    isSearch = true;
+            }
+        } 
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.transform.tag == "Player" && target != null && enemy.enabled) 
+        {
+            isSearch = false;
+            enemy.SetDestination(target.position);
         }
     }
 

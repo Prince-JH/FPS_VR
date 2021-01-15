@@ -45,6 +45,8 @@ public class PlayerMove : MonoBehaviour
     private Camera deadCam;
     [SerializeField]
     private Image gameOver;
+    [SerializeField]
+    private GameObject player;
     // Start is called before the first frame update
     void Start()
     {
@@ -159,5 +161,22 @@ public class PlayerMove : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;//마우스 커서 고정 해제
             Cursor.visible = true;
         }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.transform.tag == "EnemyBullet")
+        {
+            OnDamaged();
+        }
+    }
+    private void OnDamaged()
+    {
+        player.gameObject.layer = 13;
+        PlayerMove.healthPoint -= 10;
+        Invoke("OffDamaged", 1);
+    }
+    private void OffDamaged()
+    {
+        player.gameObject.layer = 12;
     }
 }

@@ -60,7 +60,7 @@ public class GLControl : MonoBehaviour
     //발사 시도
     private void Fire()
     {
-        if (Input.GetButton("Fire1") && currentFireRate <= 0 && !isReload)
+        if (Input.GetButtonDown("Fire1") && currentFireRate <= 0 && !isReload)
         {
             if (!isReload)
             {

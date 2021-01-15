@@ -9,14 +9,13 @@ public class Grenade : MonoBehaviour
     [SerializeField]
     private GameObject explosion;
     public static bool isExplode = false;
+    private GrenadeSound grenadeSound;
 
-    //피격 이펙트
-    [SerializeField]
-    private GameObject hitEffect;
     private void Start()
     {
         gL = FindObjectOfType<GL>();
         rigid = GetComponent<Rigidbody>();
+        grenadeSound = FindObjectOfType<GrenadeSound>();
     }
     // Update is called once per frame
     void Update()
@@ -30,6 +29,7 @@ public class Grenade : MonoBehaviour
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
         GameObject clone = Instantiate(explosion, transform.position, transform.rotation);
+        grenadeSound.SoundPlay();
         Destroy(clone, 1.2f);
 
         RaycastHit[] rayHits = Physics.SphereCastAll(transform.position, gL.explosionRange, Vector3.up, 0f, LayerMask.GetMask("Enemy"));
@@ -37,9 +37,6 @@ public class Grenade : MonoBehaviour
         {
             //피격 이펙트 + 체력깎임
             hitObject.transform.GetComponent<Enemy>().hp -= 30;
-            GameObject hit = Instantiate(hitEffect, hitObject.point, Quaternion.LookRotation(hitObject.normal));
-            Destroy(hit, 1f);
         }
     }
-    
 }

@@ -38,8 +38,8 @@ public class Bullet : MonoBehaviour
         {
             GameObject hitClone = Instantiate(hitEffect, collision.contacts[0].point, Quaternion.identity);
             Destroy(hitClone, 0.5f);
-            collision.gameObject.GetComponentInParent<Enemy>().hp-=3;
-            collision.gameObject.GetComponentInParent<Animator>().SetTrigger("HeadShot");
+            collision.gameObject.GetComponentInParent<Enemy>().hp-=15;
+            //collision.gameObject.GetComponentInParent<Animator>().SetTrigger("HeadShot");
         }
         else if(collision.gameObject.transform.tag == "Map")
         {
