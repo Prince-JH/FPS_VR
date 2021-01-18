@@ -63,14 +63,17 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        currentRifle = WeaponManager.currentWeapon;
-        IsGround();
-        Move();
-        Run();
-        Jump();
-        RotateLR();
-        RotateUD();
-        KilledInAction();
+        if(GameManager.isPlay)
+        {
+            currentRifle = WeaponManager.currentWeapon;
+            IsGround();
+            Move();
+            Run();
+            Jump();
+            RotateLR();
+            RotateUD();
+            KilledInAction();
+        }
     }
     //플레이어 이동
     private void Move()

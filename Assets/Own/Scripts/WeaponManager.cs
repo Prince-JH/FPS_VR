@@ -42,7 +42,7 @@ public class WeaponManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!GameManager.isPause)
+        if(!GameManager.isPause && !RifleControl.rifleFire && GameManager.isPlay)
         {
             if (!isChangeWeapon)
             {

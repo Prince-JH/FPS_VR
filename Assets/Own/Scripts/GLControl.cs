@@ -49,7 +49,7 @@ public class GLControl : MonoBehaviour
     }
     private void Update()
     {
-        if (!GameManager.isPause)
+        if (!GameManager.isPause && GameManager.isPlay)
         {
             TargetChange();
             Fire();

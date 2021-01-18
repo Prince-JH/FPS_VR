@@ -29,7 +29,7 @@ public class RifleControl : MonoBehaviour
     public bool zoomOutComplete = false;
     //원래 포지션 값
     private Vector3 originPos;
-    
+    public static bool rifleFire = false;
     //효과음 재생
     private AudioSource audio;
     //레이저 충돌 정보
@@ -60,7 +60,7 @@ public class RifleControl : MonoBehaviour
     }
     private void Update()
     {
-        if(!GameManager.isPause)
+        if(!GameManager.isPause && GameManager.isPlay)
         {
             RifleFireRateCalc();
             FireDirection();
@@ -93,6 +93,7 @@ public class RifleControl : MonoBehaviour
     {
         if (Input.GetButton("Fire1") && currentFireRate <= 0 && !isReload)
         {
+            rifleFire = true;
             if (!isReload)
             {
                 if (currentRifle.currentBulletCount > 0)
@@ -104,6 +105,8 @@ public class RifleControl : MonoBehaviour
                 }
             }
         }
+        if (Input.GetButtonUp("Fire1"))
+            rifleFire = false;
     }
     //발사
     private void Shoot()
@@ -238,7 +241,7 @@ public class RifleControl : MonoBehaviour
     //정조준 시도
     private void TryAim()
     {
-        if (Input.GetButtonDown("Fire2") && !isReload)
+        if (Input.GetButtonDown("Fire2") && !isReload && !rifleFire)
         {
             Aim();
         }

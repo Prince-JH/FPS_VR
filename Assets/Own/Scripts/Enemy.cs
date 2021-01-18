@@ -51,10 +51,17 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Die();
-        EnemyAttack();
-        MoveToNextWayPoint();
-        WalkAnimation();
+        if (GameManager.isPlay)
+        {
+            Die();
+            EnemyAttack();
+            EnemyMove();
+            WalkAnimation();
+        }
+        else
+        {
+            enemy.velocity = Vector3.zero;
+        }
     }
     private void Die()
     {
@@ -85,25 +92,31 @@ public class Enemy : MonoBehaviour
         int potionRedNum = 3;
         int potionYellowNum = 4;
         int num = Random.Range(0, 5);
-        if(num == potionRedNum)
+        if (num == potionRedNum)
         {
             Instantiate(potionRed, transform.position, transform.rotation);
         }
-        else if(num == potionYellowNum)
+        else if (num == potionYellowNum)
         {
             Instantiate(potionYellow, transform.position, transform.rotation);
         }
 
     }
-    private void MoveToNextWayPoint()
+    private void EnemyMove()
     {
         if (enemy.velocity == Vector3.zero && enemy.enabled && target == null)
-        {
-            enemy.SetDestination(wayPoints[count++].position);
+            MoveToNextWayPoint();
+        else if (enemy.velocity == Vector3.zero && enemy.enabled  &&  !isSearch)
+            MoveToNextWayPoint();
+    }
+    private void MoveToNextWayPoint()
+    {
+        Debug.Log("다음 위치");
+        enemy.SetDestination(wayPoints[count++].position);
 
-            if (count >= wayPoints.Length)
-                count = 0;
-        }
+        if (count >= wayPoints.Length)
+            count = 0;
+
     }
     private void WalkAnimation()
     {
@@ -167,7 +180,7 @@ public class Enemy : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        if (other.transform.tag == "Player") 
+        if (other.transform.tag == "Player")
         {
             target = other.transform;
             if (PlayerMove.healthPoint == 0)
@@ -177,13 +190,13 @@ public class Enemy : MonoBehaviour
     }
     private void TargetVisible()
     {
-        if(target != null && enemy.enabled)
+        if (target != null && enemy.enabled)
         {
             Vector3 targetDirection = (target.position - transform.position).normalized;
             if (Physics.Raycast(transform.position + new Vector3(0, 1, 0), targetDirection, out RaycastHit rayHit, observeRange))
             {
-                
-                Debug.DrawRay(transform.position + new Vector3(0, 1, 0), targetDirection * 10f, Color.green);
+
+                Debug.DrawRay(transform.position + new Vector3(0, 1, 0), targetDirection * 30f, Color.green);
                 if (rayHit.transform.tag != "Player")
                 {
                     isSearch = false;
@@ -192,11 +205,11 @@ public class Enemy : MonoBehaviour
                 else
                     isSearch = true;
             }
-        } 
+        }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.transform.tag == "Player" && target != null && enemy.enabled) 
+        if (other.transform.tag == "Player" && target != null && enemy.enabled)
         {
             isSearch = false;
             enemy.SetDestination(target.position);

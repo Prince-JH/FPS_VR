@@ -14,9 +14,10 @@ public class GameManager : MonoBehaviour
     private Transform[] spawnTransform;
     public static int enemyCount = 0;
     public static int kill = 0;
+    public static bool isPlay = true;
     private void Start()
     {
-        InvokeRepeating("EnemySpawn", 0, 1f);
+        InvokeRepeating("EnemySpawn", 0, 2f);
     }
     private void Update()
     {
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
     }
     public void OnClickRestart()
     {
+        isPlay = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         enemyCount = 0;
         kill = 0;

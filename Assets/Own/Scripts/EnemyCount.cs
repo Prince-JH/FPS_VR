@@ -39,6 +39,7 @@ public class EnemyCount : MonoBehaviour
     {
         if (GameManager.kill >= missionNum)
         {
+            GameManager.isPlay = false;
             player.GetComponent<Rigidbody>().isKinematic = true;
             missionComplete.SetActive(true);
             Cursor.lockState = CursorLockMode.None;//마우스 커서 고정 해제
