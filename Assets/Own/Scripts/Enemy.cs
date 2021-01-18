@@ -14,12 +14,13 @@ public class Enemy : MonoBehaviour
     //탐지
     [SerializeField]
     private Transform enemyBody;
-    private float observeRange = 30f;
+    private float observeRange = 45f;
     [SerializeField]
     private LayerMask layerMask;
     private bool isSearch = false;
     private bool isWalk = false;
     private bool isShoot = true;
+    private bool isAttack = false;
     private Transform target = null;
     private float fireRate = 0.5f;
     [SerializeField]
@@ -106,12 +107,11 @@ public class Enemy : MonoBehaviour
     {
         if (enemy.velocity == Vector3.zero && enemy.enabled && target == null)
             MoveToNextWayPoint();
-        else if (enemy.velocity == Vector3.zero && enemy.enabled  &&  !isSearch)
+        else if (enemy.velocity == Vector3.zero && enemy.enabled  &&  !isSearch && !isAttack)
             MoveToNextWayPoint();
     }
     private void MoveToNextWayPoint()
     {
-        Debug.Log("다음 위치");
         enemy.SetDestination(wayPoints[count++].position);
 
         if (count >= wayPoints.Length)
@@ -137,6 +137,7 @@ public class Enemy : MonoBehaviour
         {
             if (isSearch && enemy.enabled)
             {
+                isAttack = true;
                 enemyBody.LookAt(target);
                 enemy.velocity = Vector3.zero;
                 animator.SetTrigger("Shoot");
@@ -193,17 +194,21 @@ public class Enemy : MonoBehaviour
         if (target != null && enemy.enabled)
         {
             Vector3 targetDirection = (target.position - transform.position).normalized;
-            if (Physics.Raycast(transform.position + new Vector3(0, 1, 0), targetDirection, out RaycastHit rayHit, observeRange))
+            if (Physics.Raycast(transform.position + new Vector3(0, 2, 0), targetDirection, out RaycastHit rayHit, observeRange))
             {
 
-                Debug.DrawRay(transform.position + new Vector3(0, 1, 0), targetDirection * 30f, Color.green);
+                Debug.DrawRay(transform.position + new Vector3(0, 2, 0), targetDirection * 45f, Color.green);
                 if (rayHit.transform.tag != "Player")
                 {
                     isSearch = false;
-                    enemy.SetDestination(target.position);
+                    if(enemy.velocity == Vector3.zero)
+                        enemy.SetDestination(target.position);
                 }
                 else
+                {
+                    isAttack = false;
                     isSearch = true;
+                }
             }
         }
     }
