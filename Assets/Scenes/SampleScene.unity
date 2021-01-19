@@ -924,6 +924,7 @@ MonoBehaviour:
   isAimMode: 0
   zoomOutComplete: 0
   theCam: {fileID: 2055956017}
+  mainCam: {fileID: 963194227}
   hitEffect: {fileID: 1000013169864706, guid: e5a3d6da48298a0458c1990f58c27069, type: 3}
   mapHitEffect: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d,
     type: 3}
@@ -21255,6 +21256,7 @@ MonoBehaviour:
   isAimMode: 0
   zoomOutComplete: 0
   theCam: {fileID: 1267052039}
+  mainCam: {fileID: 0}
   hitEffect: {fileID: 1000013169864706, guid: e5a3d6da48298a0458c1990f58c27069, type: 3}
   mapHitEffect: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d,
     type: 3}

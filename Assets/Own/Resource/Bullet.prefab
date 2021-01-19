@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7884520035003378599}
   - component: {fileID: 7924275596434343383}
   - component: {fileID: 7870083426059966010}
-  - component: {fileID: -5441769335567534955}
+  - component: {fileID: 7715478384255948334}
   m_Layer: 16
   m_Name: Bullet
   m_TagString: Untagged
@@ -28,13 +28,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7871610512598145959}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
-  m_LocalPosition: {x: -25.481747, y: -12.803426, z: 0.023105621}
+  m_LocalRotation: {x: 0.7087004, y: 0.70550966, z: -0, w: 0}
+  m_LocalPosition: {x: -25.196394, y: -12.519354, z: 0.023105621}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 0, z: -89.741}
 --- !u!33 &7876286896178033757
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -97,7 +97,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &7870083426059966010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,8 +113,8 @@ MonoBehaviour:
   hitEffect: {fileID: 1000013169864706, guid: e5a3d6da48298a0458c1990f58c27069, type: 3}
   mapHitEffect: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d,
     type: 3}
---- !u!136 &-5441769335567534955
-CapsuleCollider:
+--- !u!135 &7715478384255948334
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -123,7 +123,6 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 0.086103186
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: -0.00451345}
+  serializedVersion: 2
+  m_Radius: 0.08539931
+  m_Center: {x: 0.007917747, y: -0.028419033, z: -0.0045134574}

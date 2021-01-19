@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private float speed = 300.0f;
+    private float speed = 400.0f;
     private Rigidbody rig;
     private RifleControl rifleControl;
     //피격 이펙트
@@ -27,6 +27,7 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(collision.gameObject.name);
         if(collision.gameObject.transform.tag == "Enemy")
         {
             GameObject hitClone = Instantiate(hitEffect, collision.contacts[0].point, Quaternion.identity);

@@ -38,6 +38,9 @@ public class RifleControl : MonoBehaviour
     //필요 컴포넌트
     [SerializeField]
     private Camera theCam;
+    [SerializeField]
+    private Camera mainCam;
+    private float scroll;
 
     //피격 이펙트
     [SerializeField]
@@ -68,15 +71,21 @@ public class RifleControl : MonoBehaviour
             TryReload();
             TryAim();
             ZoomOutCheck();
+            SniperZoom();
         }
     }
 
     //발사 방향
     private void FireDirection()
     {
-        bulletDir = theCam.transform.forward +
-            new Vector3(Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy)
-            , Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy), 0);
+        if (isAimMode)
+            bulletDir = mainCam.transform.forward;
+        else
+        {
+            bulletDir = theCam.transform.forward +
+                new Vector3(Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy)
+                , Random.Range(-crosshair.getAccuracy() - currentRifle.accuracy, crosshair.getAccuracy() + currentRifle.accuracy), 0);
+        }
     }
     public Vector3 getFiredDirection()
     {
@@ -267,6 +276,7 @@ public class RifleControl : MonoBehaviour
         }
         else
         {
+            mainCam.fieldOfView = 60;
             StopAllCoroutines();
             StartCoroutine(ButtstockCoroutine());
             StartCoroutine(ZoomOut());
@@ -359,5 +369,32 @@ public class RifleControl : MonoBehaviour
 
         currentRifle.transform.localPosition = Vector3.zero;
         currentRifle.gameObject.transform.parent.gameObject.SetActive(true);
+    }
+    private void SniperZoom()
+    {
+        if(isAimMode)
+        {
+            StartCoroutine(MainCamZoom());
+        }
+    }
+    IEnumerator MainCamZoom()
+    {
+        scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll < 0)
+        {
+            if (mainCam.fieldOfView < 60)
+            {
+                mainCam.fieldOfView += 4;
+                yield return null;
+            }
+        }
+        else if(scroll > 0)
+        {
+            if (mainCam.fieldOfView > 12)
+            {
+                mainCam.fieldOfView -= 4;
+                yield return null;
+            }
+        }
     }
 }
