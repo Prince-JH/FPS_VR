@@ -4128,7 +4128,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400060, guid: fcb334eb247ae3e488abb081c847cf09, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400060, guid: fcb334eb247ae3e488abb081c847cf09, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13070,10 +13070,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.48883057
-  m_Height: 2.6172671
+  m_Radius: 0.9365978
+  m_Height: 2.7942162
   m_Direction: 1
-  m_Center: {x: 0.011169434, y: 1.2558315, z: 0}
+  m_Center: {x: 0.07629967, y: 1.344306, z: 0}
 --- !u!54 &1312992310
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14385,7 +14385,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 102.815, y: -85.002014, z: -60.428986}
 --- !u!1 &1413049803
 GameObject:

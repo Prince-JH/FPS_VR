@@ -34,7 +34,7 @@ public class RifleControl : MonoBehaviour
     private AudioSource audio;
     //레이저 충돌 정보
     private RaycastHit hitInfo;
-    
+
     //필요 컴포넌트
     [SerializeField]
     private Camera theCam;
@@ -63,7 +63,7 @@ public class RifleControl : MonoBehaviour
     }
     private void Update()
     {
-        if(!GameManager.isPause && GameManager.isPlay)
+        if (!GameManager.isPause && GameManager.isPlay)
         {
             RifleFireRateCalc();
             FireDirection();
@@ -103,16 +103,14 @@ public class RifleControl : MonoBehaviour
         if (Input.GetButton("Fire1") && currentFireRate <= 0 && !isReload)
         {
             rifleFire = true;
-            if (!isReload)
+            if (currentRifle.currentBulletCount > 0)
+                Shoot();
+            else
             {
-                if (currentRifle.currentBulletCount > 0)
-                    Shoot();
-                else
-                {
-                    CancelAim();
-                    StartCoroutine(Reload());
-                }
+                CancelAim();
+                StartCoroutine(Reload());
             }
+
         }
         if (Input.GetButtonUp("Fire1"))
             rifleFire = false;
@@ -143,9 +141,9 @@ public class RifleControl : MonoBehaviour
     //피격
     private void Hit()
     {
-        if(Physics.Raycast(theCam.transform.position, bulletDir, out hitInfo, currentRifle.range))
+        if (Physics.Raycast(theCam.transform.position, bulletDir, out hitInfo, currentRifle.range))
         {
-            if(hitInfo.transform.tag == "Enemy")
+            if (hitInfo.transform.tag == "Enemy")
             {
                 GameObject clone = Instantiate(hitEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
                 Destroy(clone, 0.5f);
@@ -163,18 +161,18 @@ public class RifleControl : MonoBehaviour
     {
         Vector3 recoilBack = new Vector3(originPos.x, originPos.y, -currentRifle.resistForce);
         Vector3 aimRecoilBack = new Vector3(currentRifle.getAimOriginPos().x, currentRifle.getAimOriginPos().y, -currentRifle.resistAimForce);
-        if(!isAimMode)
+        if (!isAimMode)
         {
             currentRifle.transform.localPosition = originPos;
-            
+
             //반동
-            while(currentRifle.transform.localPosition.z > -currentRifle.resistForce + 0.02f)
+            while (currentRifle.transform.localPosition.z > -currentRifle.resistForce + 0.02f)
             {
                 currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, recoilBack, 0.4f);
                 yield return null;
             }
             //원위치
-            while(currentRifle.transform.localPosition.z < originPos.z - 0.02f)
+            while (currentRifle.transform.localPosition.z < originPos.z - 0.02f)
             {
                 currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, originPos, 0.1f);
                 yield return null;
@@ -231,7 +229,7 @@ public class RifleControl : MonoBehaviour
                 currentRifle.carryBulletCount = 0;
             }
             isReload = false;
-            
+
         }
         else
         {
@@ -241,7 +239,7 @@ public class RifleControl : MonoBehaviour
     //재장전 취소
     public void CancelReload()
     {
-        if(isReload)
+        if (isReload)
         {
             StopAllCoroutines();
             isReload = false;
@@ -271,7 +269,7 @@ public class RifleControl : MonoBehaviour
         {
             StopAllCoroutines();
             StartCoroutine(AimCoroutine());
-            StartCoroutine(ZoomIn());
+            StartCoroutine(FOVIn());
             StartCoroutine(NearClipIn());
         }
         else
@@ -279,7 +277,7 @@ public class RifleControl : MonoBehaviour
             mainCam.fieldOfView = 60;
             StopAllCoroutines();
             StartCoroutine(ButtstockCoroutine());
-            StartCoroutine(ZoomOut());
+            StartCoroutine(FOVOut());
             StartCoroutine(NearClipOut());
         }
     }
@@ -291,7 +289,7 @@ public class RifleControl : MonoBehaviour
             currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, currentRifle.getAimOriginPos(), 0.2f);
             yield return null;
         }
-        
+
     }
     //정조준 비활성화
     IEnumerator ButtstockCoroutine()
@@ -301,27 +299,27 @@ public class RifleControl : MonoBehaviour
             currentRifle.transform.localPosition = Vector3.Lerp(currentRifle.transform.localPosition, originPos, 0.2f);
             yield return null;
         }
-        
-        
+
+
     }
-    IEnumerator ZoomIn()
+    IEnumerator FOVIn()
     {
-        
-        while(theCam.fieldOfView > 22)
+
+        while (theCam.fieldOfView > 22)
         {
             theCam.fieldOfView = Mathf.Lerp(theCam.fieldOfView, 22, 0.2f);
             yield return null;
         }
-        
+
     }
-    IEnumerator ZoomOut()
+    IEnumerator FOVOut()
     {
         while (theCam.fieldOfView < 60)
         {
             theCam.fieldOfView = Mathf.Lerp(theCam.fieldOfView, 60, 0.2f);
             yield return null;
         }
-        
+
     }
     IEnumerator NearClipIn()
     {
@@ -330,7 +328,7 @@ public class RifleControl : MonoBehaviour
             theCam.nearClipPlane = Mathf.Lerp(theCam.nearClipPlane, 0.01f, 0.2f);
             yield return null;
         }
-        
+
     }
     IEnumerator NearClipOut()
     {
@@ -339,7 +337,7 @@ public class RifleControl : MonoBehaviour
             theCam.nearClipPlane = Mathf.Lerp(theCam.nearClipPlane, 0.27f, 0.2f);
             yield return null;
         }
-        
+
     }
     private void ZoomOutCheck()
     {
@@ -358,7 +356,7 @@ public class RifleControl : MonoBehaviour
     }
     public void GunChange(Rifle gun)
     {
-        if(WeaponManager.currentWeapon != null && !isAimMode)
+        if (WeaponManager.currentWeapon != null && !isAimMode)
         {
             WeaponManager.currentWeapon.gameObject.transform.parent.gameObject.SetActive(false);
         }
@@ -372,7 +370,7 @@ public class RifleControl : MonoBehaviour
     }
     private void SniperZoom()
     {
-        if(isAimMode)
+        if (isAimMode)
         {
             StartCoroutine(MainCamZoom());
         }
@@ -388,7 +386,7 @@ public class RifleControl : MonoBehaviour
                 yield return null;
             }
         }
-        else if(scroll > 0)
+        else if (scroll > 0)
         {
             if (mainCam.fieldOfView > 12)
             {

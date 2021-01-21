@@ -42,7 +42,11 @@ public class WeaponManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!GameManager.isPause && !RifleControl.rifleFire && GameManager.isPlay)
+        WeaponSwap();
+    }
+    private void WeaponSwap()
+    {
+        if (!GameManager.isPause && !RifleControl.rifleFire && GameManager.isPlay)
         {
             if (!isChangeWeapon)
             {
@@ -67,7 +71,6 @@ public class WeaponManager : MonoBehaviour
             }
         }
     }
-
     public IEnumerator ChangeWeaponCoroutine(string name)
     {
         isChangeWeapon = true;
