@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        Pause();
+        TryPause();
     }
     public void OnClickRestart()
     {
@@ -30,31 +30,44 @@ public class GameManager : MonoBehaviour
         enemyCount = 0;
         kill = 0;
         PlayerMove.healthPoint = 100;
+        if (isPause)
+            Pause();
+    }
+    private void TryPause()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Pause();
     }
     private void Pause()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (isPause)
         {
-            if (isPause)
-            {
-                isPause = false;
-                pauseMenu.SetActive(false);
-                Time.timeScale = 1;
-            }
-            else
-            {
-                isPause = true;
-                pauseMenu.SetActive(true);
-                Time.timeScale = 0;
-            }
+            Cursor.lockState = CursorLockMode.Locked;//마우스 커서 고정
+            Cursor.visible = false;
+            isPause = false;
+            pauseMenu.SetActive(false);
+            Time.timeScale = 1;
         }
+        else
+        {
+            isPause = true;
+            pauseMenu.SetActive(true);
+            Time.timeScale = 0;
+            Cursor.lockState = CursorLockMode.None;//마우스 커서 고정
+            Cursor.visible = true;
+        }
+
     }
     private void EnemySpawn()
     {
-        if(enemyCount < 8)
+        if (enemyCount < 8)
         {
             GameObject enemyClone = Instantiate(enemy, spawnTransform[Random.Range(0, spawnTransform.Length)]);
             enemyCount++;
         }
+    }
+    public void OnClickExit()
+    {
+        Application.Quit();
     }
 }

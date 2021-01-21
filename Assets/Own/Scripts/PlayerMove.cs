@@ -27,7 +27,7 @@ public class PlayerMove : MonoBehaviour
     private bool isDead;
 
     //카메라
-    private float lookSensitivity = 2.5f;
+    private float lookSensitivity = 1.5f;
     private float cameraRotationLimit = 60;
     private float currentCameraRotationX = 0;
 

@@ -90,6 +90,7 @@ public class WeaponManager : MonoBehaviour
         switch (currentWeapon.name)
         {
             case "AssaultRifle":
+                crosshairAR.GetComponent<Animator>().SetTrigger("Idle");
                 rifleControl.CancelAim();
                 rifleControl.CancelReload();
                 break;
