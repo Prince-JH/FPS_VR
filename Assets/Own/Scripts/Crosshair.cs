@@ -46,13 +46,13 @@ public class Crosshair : MonoBehaviour
         if (rifleControl.GetAimMode())
             rifleAccuracy = 0;
         else if (animator.GetBool("Walk"))
-            rifleAccuracy = 0.04f;
-        else if (animator.GetBool("Run"))
             rifleAccuracy = 0.06f;
+        else if (animator.GetBool("Run"))
+            rifleAccuracy = 0.12f;
         else if (animator.GetBool("Jump"))
-            rifleAccuracy = 0.07f;
+            rifleAccuracy = 0.15f;
         else
-            rifleAccuracy = 0.02f;
+            rifleAccuracy = 0.04f;
 
         return rifleAccuracy;
     }

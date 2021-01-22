@@ -25,7 +25,7 @@ public class EnemyBullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rig.AddForce(gameObject.transform.localRotation * Vector3.forward * speed + new Vector3(10, 0, 0));
+        rig.AddForce(gameObject.transform.localRotation * Vector3.forward * speed + new Vector3(Random.Range(5, 10), 0, 0));
         if (PlayerMove.healthPoint <= 0)
         {
             lightAnimator1.enabled = false;

@@ -21,12 +21,11 @@ public class Enemy : MonoBehaviour
     private bool isWalk = false;
     private bool isShoot = true;
     private bool isAttack = false;
+    private bool isFollow = false;
     private Transform target = null;
     private float fireRate = 0.5f;
     [SerializeField]
     private ParticleSystem muzzleFlash;
-    [SerializeField]
-    private GameObject bullet;
     private Transform bulletPos;
     [SerializeField]
     private GameObject gunSound;
@@ -34,6 +33,7 @@ public class Enemy : MonoBehaviour
     private GameObject potionRed;
     [SerializeField]
     private GameObject potionYellow;
+    private GameObject bulletClone;
 
     [HideInInspector]
     public int hp = 3;
@@ -84,7 +84,7 @@ public class Enemy : MonoBehaviour
             animator.SetTrigger("Dead");
         DropPotion();
         yield return new WaitForSeconds(2);
-        Destroy(gameObject);
+        EnemyPool.ReturnObject(gameObject);
         GameManager.enemyCount--;
         logFlag = true;
     }
@@ -107,7 +107,7 @@ public class Enemy : MonoBehaviour
     {
         if (enemy.velocity == Vector3.zero && enemy.enabled && target == null)
             MoveToNextWayPoint();
-        else if (enemy.velocity == Vector3.zero && enemy.enabled  &&  !isSearch && !isAttack)
+        else if (enemy.velocity == Vector3.zero && enemy.enabled  &&  !isSearch && !isAttack && !isFollow)
             MoveToNextWayPoint();
     }
     private void MoveToNextWayPoint()
@@ -171,13 +171,21 @@ public class Enemy : MonoBehaviour
         if (isShoot)
         {
             muzzleFlash.Play();
-            GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
-            Destroy(bulletClone, 2.5f);
+            bulletClone = EnemyBulletPool.GetObject();
+            bulletClone.transform.position = bulletPos.position;
+            bulletClone.transform.rotation = bulletPos.rotation;
+            //GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
+            //Destroy(bulletClone, 2.5f);
+            Invoke("DestroyBullet", 2.5f);
             isShoot = false;
             gunSound.GetComponent<AudioSource>().Play();
             yield return new WaitForSeconds(fireRate);
             isShoot = true;
         }
+    }
+    private void DestroyBullet()
+    {
+        EnemyBulletPool.ReturnObject(bulletClone);
     }
     private void OnTriggerStay(Collider other)
     {
@@ -201,6 +209,7 @@ public class Enemy : MonoBehaviour
                 if (rayHit.transform.tag != "Player")
                 {
                     isSearch = false;
+                    isFollow = true;
                     if(enemy.velocity == Vector3.zero)
                         enemy.SetDestination(target.position);
                 }

@@ -39,7 +39,7 @@ public class Grenade : MonoBehaviour
         */
         
     }
-    
+
     /*
     private void OnDrawGizmos()
     {
@@ -48,6 +48,10 @@ public class Grenade : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position + Vector3.up, 8);
     }
     */
+    private void OnCollisionEnter(Collision collision)
+    {
+        rigid.velocity *= 0.7f;
+    }
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.layer == 11)

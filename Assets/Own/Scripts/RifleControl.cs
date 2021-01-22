@@ -134,10 +134,16 @@ public class RifleControl : MonoBehaviour
     }
     IEnumerator ShootBullet()
     {
-        GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
-        Destroy(bulletClone, 2.0f);
+        //GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
+        GameObject bulletClone = BulletObjectPool.GetObject();
+        bulletClone.transform.position = bulletPos.position;
+        bulletClone.transform.rotation = bulletPos.rotation;
+        yield return new WaitForSeconds(2f);
+        BulletObjectPool.ReturnObject(bulletClone);
+        //Destroy(bulletClone, 2.0f);
         yield return null;
     }
+
     //피격
     private void Hit()
     {
