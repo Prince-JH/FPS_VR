@@ -44,7 +44,7 @@ public class Bullet : MonoBehaviour
         }
         else if(collision.gameObject.transform.tag == "Map")
         {
-            GameObject mapHitClone = Instantiate(mapHitEffect, collision.transform.position, Quaternion.identity);
+            GameObject mapHitClone = Instantiate(mapHitEffect, collision.contacts[0].point, Quaternion.identity);
             Destroy(mapHitClone, 0.5f);
         }
         Destroy(gameObject);

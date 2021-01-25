@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
     public static int enemyCount = 0;
     public static int kill = 0;
     public static bool isPlay = true;
-    private GameObject enemyClone;
     private void Start()
     {
         InvokeRepeating("EnemySpawn", 0, 2f);
@@ -63,11 +62,7 @@ public class GameManager : MonoBehaviour
     {
         if (enemyCount < 8)
         {
-            //enemyClone = Instantiate(enemy, spawnTransform[Random.Range(0, spawnTransform.Length)]);
-            enemyClone = EnemyPool.GetObject();
-            Transform spawn = spawnTransform[Random.Range(0, spawnTransform.Length)];
-            enemyClone.transform.position = spawn.position;
-            enemyClone.transform.rotation = spawn.rotation;
+            GameObject enemyClone = Instantiate(enemy, spawnTransform[Random.Range(0, spawnTransform.Length)]);
             enemyCount++;
         }
     }

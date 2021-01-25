@@ -51,8 +51,14 @@ public class BulletObjectPool : MonoBehaviour
     }
     public static void ReturnObject(GameObject bullet)
     {
+        ResetObject(bullet);
         bullet.gameObject.SetActive(false);
         bullet.transform.SetParent(Instance.transform);
         Instance.poolingObjectQueue.Enqueue(bullet);
+    }
+    private static void ResetObject(GameObject bullet)
+    {
+        bullet.transform.position = Vector3.zero;
+        bullet.transform.rotation = Quaternion.identity;
     }
 }

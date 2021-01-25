@@ -34,6 +34,8 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject potionYellow;
     private GameObject bulletClone;
+    [SerializeField]
+    private GameObject bullet;
 
     [HideInInspector]
     public int hp = 3;
@@ -84,7 +86,7 @@ public class Enemy : MonoBehaviour
             animator.SetTrigger("Dead");
         DropPotion();
         yield return new WaitForSeconds(2);
-        EnemyPool.ReturnObject(gameObject);
+        Destroy(gameObject);
         GameManager.enemyCount--;
         logFlag = true;
     }
@@ -171,12 +173,8 @@ public class Enemy : MonoBehaviour
         if (isShoot)
         {
             muzzleFlash.Play();
-            bulletClone = EnemyBulletPool.GetObject();
-            bulletClone.transform.position = bulletPos.position;
-            bulletClone.transform.rotation = bulletPos.rotation;
-            //GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
-            //Destroy(bulletClone, 2.5f);
-            Invoke("DestroyBullet", 2.5f);
+            GameObject bulletClone = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
+            Destroy(bulletClone, 2.5f);
             isShoot = false;
             gunSound.GetComponent<AudioSource>().Play();
             yield return new WaitForSeconds(fireRate);
