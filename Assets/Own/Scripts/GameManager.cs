@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Valve.VR;
 
 public class GameManager : MonoBehaviour
 {
+    public SteamVR_Input_Sources leftHand = SteamVR_Input_Sources.LeftHand;
+    public SteamVR_Action_Boolean menu;
+
     public static bool isPause;
     [SerializeField]
     private GameObject pauseMenu;
@@ -15,6 +19,9 @@ public class GameManager : MonoBehaviour
     public static int enemyCount = 0;
     public static int kill = 0;
     public static bool isPlay = true;
+
+    [SerializeField]
+    private GameObject raser;
     private void Start()
     {
         InvokeRepeating("EnemySpawn", 0, 2f);
@@ -33,23 +40,30 @@ public class GameManager : MonoBehaviour
         if (isPause)
             Pause();
     }
+    /*
     private void TryPause()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
+            Pause();
+    }
+    */
+    private void TryPause()
+    {
+        if (menu.GetStateDown(leftHand))
             Pause();
     }
     private void Pause()
     {
         if (isPause)
         {
-            Cursor.lockState = CursorLockMode.Locked;//마우스 커서 고정
-            Cursor.visible = false;
+            raser.SetActive(true);
             isPause = false;
             pauseMenu.SetActive(false);
             Time.timeScale = 1;
         }
         else
         {
+            raser.SetActive(false);
             isPause = true;
             pauseMenu.SetActive(true);
             Time.timeScale = 0;

@@ -2,9 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Valve.VR;
 
 public class PlayerMove : MonoBehaviour
 {
+    //VR Equip
+    public SteamVR_Input_Sources leftHand = SteamVR_Input_Sources.LeftHand;
+    public SteamVR_Input_Sources rightHand = SteamVR_Input_Sources.RightHand;
+    public SteamVR_Input_Sources any = SteamVR_Input_Sources.Any;
+
+    public SteamVR_Action_Boolean trigger;
+    public SteamVR_Action_Boolean grip = SteamVR_Input.GetBooleanAction("GrabGrip");
+    public SteamVR_Action_Boolean trackPadTouch;
+    public SteamVR_Action_Vector2 trackPadPosition;
     private Gun currentRifle;
     //플레이어 이동 관련 변수
     
@@ -25,12 +35,12 @@ public class PlayerMove : MonoBehaviour
     private bool isRun;
     private bool isGround = true;
     private bool isDead;
-
+    /*
     //카메라
     private float lookSensitivity = 1.5f;
     private float cameraRotationLimit = 60;
     private float currentCameraRotationX = 0;
-
+    */
     //컴포넌트 
     [SerializeField]
     private Camera cam;
@@ -42,16 +52,16 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private DeadSound deadSound;
     [SerializeField]
-    private Camera deadCam;
+    private Camera weaponCam;
     [SerializeField]
     private Image gameOver;
     [SerializeField]
     private GameObject player;
+    [SerializeField]
+    private GameObject raser;
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;//마우스 커서 고정
-        Cursor.visible = false;
         rig = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         animator = GetComponent<Animator>();
@@ -67,12 +77,39 @@ public class PlayerMove : MonoBehaviour
         {
             currentRifle = WeaponManager.currentWeapon;
             IsGround();
-            Move();
+            VRMove();
             Run();
             Jump();
-            RotateLR();
-            RotateUD();
+            //RotateLR();
+            //RotateUD();
+            PlayerSight();
             KilledInAction();
+        }
+    }
+    //플레이어 VR이동
+    private void VRMove()
+    {
+        if (trackPadTouch.GetState(leftHand))
+        {
+            Vector2 pos = trackPadPosition.GetAxis(leftHand);
+            float moveX = pos.x;
+            float moveZ = pos.y;
+
+            Vector3 moveHorizontal = transform.right * moveX;
+            Vector3 moveVertical = transform.forward * moveZ;
+
+            velocity = (moveHorizontal + moveVertical).normalized * speed;
+            if (velocity.magnitude <= 0.01f)
+                isWalk = false;
+            else if (!isRun)
+                isWalk = true;
+            rig.MovePosition(transform.position + velocity * Time.deltaTime);
+            animator.SetBool("Run", isRun);
+            currentRifle.animator.SetBool("Run", isRun);
+            crosshair.RunAnimation(isRun);
+            animator.SetBool("Walk", isWalk);
+            currentRifle.animator.SetBool("Walk", isWalk);
+            crosshair.WalkAnimation(isWalk);
         }
     }
     //플레이어 이동
@@ -100,6 +137,21 @@ public class PlayerMove : MonoBehaviour
     //달리기
     private void Run()
     {
+        if (grip.GetStateDown(leftHand) && isWalk)
+        {
+            isWalk = false;
+            isRun = true;
+            speed = runSpeed;
+        }
+        else if (grip.GetStateUp(leftHand))
+        {
+            isRun = false;
+            speed = walkSpeed;
+        }
+    }
+    /*
+    private void Run()
+    {
         if (Input.GetKey(KeyCode.LeftShift) && isWalk)
         {
             isWalk = false;
@@ -112,13 +164,23 @@ public class PlayerMove : MonoBehaviour
             speed = walkSpeed;
         }
     }
+    */
     //바닥에 있는지 확인
     private void IsGround()
     { 
         isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y);
-        crosshair.JumpAnimation(!isGround);
+        //crosshair.JumpAnimation(!isGround);
     }
     //점프
+    private void Jump()
+    {
+        if (trigger.GetStateDown(leftHand) && isGround)
+        {
+            isWalk = false;
+            rig.velocity = transform.up * jumpForce;
+        }
+    }
+    /*
     private void Jump()
     {
         if(Input.GetKeyDown(KeyCode.Space) && isGround)
@@ -127,7 +189,9 @@ public class PlayerMove : MonoBehaviour
             rig.velocity = transform.up * jumpForce;
         }
     }
+    */
     //카메라 좌우 회전(캐릭터 회전)
+    /*
     private void RotateLR()
     {
         if(!isDead && !GameManager.isPause)
@@ -150,19 +214,24 @@ public class PlayerMove : MonoBehaviour
             cam.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0, 0);
         }
     }
+    */
+    private void PlayerSight()
+    {
+        gameObject.transform.localEulerAngles = new Vector3(0, cam.transform.localEulerAngles.y, 0); 
+    }
     private void KilledInAction()
     {
         if (healthPoint <= 0 && deadSound.canPlay)
         {
+            GameManager.isPlay = false;
             animator.SetTrigger("Dead");
             deadSound.DeadSoundPlay();
-            cam.gameObject.SetActive(false);
-            deadCam.gameObject.SetActive(true);
+            string[] layer = new string[] { "Ignore Raycast" };
+            weaponCam.cullingMask = LayerMask.GetMask(layer);
             isDead = true;
             rig.isKinematic = true;
             gameOver.gameObject.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;//마우스 커서 고정 해제
-            Cursor.visible = true;
+            raser.SetActive(true);
         }
     }
     private void OnCollisionEnter(Collision collision)
@@ -182,4 +251,5 @@ public class PlayerMove : MonoBehaviour
     {
         player.gameObject.layer = 12;
     }
+    
 }

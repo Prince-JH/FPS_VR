@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class WeaponManager : MonoBehaviour
 {
+    public SteamVR_Input_Sources rightHand = SteamVR_Input_Sources.RightHand;
+    public SteamVR_Action_Boolean menu;
+
     //무기 교체 중복 실행 방지
     public static bool isChangeWeapon;
     //현재 무기, 애니메이션
@@ -44,6 +48,7 @@ public class WeaponManager : MonoBehaviour
     {
         WeaponSwap();
     }
+    /*
     private void WeaponSwap()
     {
         if (!GameManager.isPause && !RifleControl.rifleFire && GameManager.isPlay)
@@ -70,7 +75,38 @@ public class WeaponManager : MonoBehaviour
                 crosshairGL.crosshairGL.SetActive(true);
             }
         }
+    }*/
+    
+    private void WeaponSwap()
+    {
+        if (!GameManager.isPause && !RifleControl.rifleFire && GameManager.isPlay)
+        {
+            if (!isChangeWeapon)
+            {
+                if (menu.GetStateDown(rightHand) && currentWeapon.name == "GrenadeLauncher")
+                {
+                    StartCoroutine(ChangeWeaponCoroutine("AssaultRifle"));
+                }
+                else if (menu.GetStateDown(rightHand) && currentWeapon.name == "AssaultRifle")
+                {
+                    StartCoroutine(ChangeWeaponCoroutine("GrenadeLauncher"));
+                }
+            }
+            /*
+            if (currentWeapon.name == "AssaultRifle")
+            {
+                crosshairAR.crosshairAR.SetActive(true);
+                crosshairGL.crosshairGL.SetActive(false);
+            }
+            else if (currentWeapon.name == "GrenadeLauncher")
+            {
+                crosshairAR.crosshairAR.SetActive(false);
+                crosshairGL.crosshairGL.SetActive(true);
+            }
+            */
+        }
     }
+    
     public IEnumerator ChangeWeaponCoroutine(string name)
     {
         isChangeWeapon = true;
@@ -86,11 +122,10 @@ public class WeaponManager : MonoBehaviour
     }
     private void CancelPreAction()
     {
-
         switch (currentWeapon.name)
         {
             case "AssaultRifle":
-                crosshairAR.GetComponent<Animator>().SetTrigger("Idle");
+                //crosshairAR.GetComponent<Animator>().SetTrigger("Idle");
                 rifleControl.CancelAim();
                 rifleControl.CancelReload();
                 break;
@@ -98,8 +133,6 @@ public class WeaponManager : MonoBehaviour
                 gLControl.CancelReload();
                 break;
         }
-
-
     }
     IEnumerator WeaponChange(string name)
     {

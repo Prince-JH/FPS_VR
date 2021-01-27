@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rig.AddForce(rifleControl.getFiredDirection() * speed);
+        rig.AddForce(rifleControl.GetFiredDirection() * speed);
     }
 
     private void OnCollisionEnter(Collision collision)

@@ -6,9 +6,9 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     //정찰
-    private NavMeshAgent enemy = null;
+    private NavMeshAgent enemy;
     [SerializeField]
-    private Transform[] wayPoints = null;
+    private Transform[] wayPoints;
     private int count = 0;
 
     //탐지
@@ -33,7 +33,6 @@ public class Enemy : MonoBehaviour
     private GameObject potionRed;
     [SerializeField]
     private GameObject potionYellow;
-    private GameObject bulletClone;
     [SerializeField]
     private GameObject bullet;
 
@@ -103,7 +102,6 @@ public class Enemy : MonoBehaviour
         {
             Instantiate(potionYellow, transform.position, transform.rotation);
         }
-
     }
     private void EnemyMove()
     {
@@ -181,10 +179,6 @@ public class Enemy : MonoBehaviour
             isShoot = true;
         }
     }
-    private void DestroyBullet()
-    {
-        EnemyBulletPool.ReturnObject(bulletClone);
-    }
     private void OnTriggerStay(Collider other)
     {
         if (other.transform.tag == "Player")
@@ -211,6 +205,8 @@ public class Enemy : MonoBehaviour
                     if(enemy.velocity == Vector3.zero)
                         enemy.SetDestination(target.position);
                 }
+                else if(rayHit.transform.tag == "EnemyBullet" || rayHit.transform.tag == "Bullet")
+                        ;
                 else
                 {
                     isAttack = false;
@@ -227,5 +223,4 @@ public class Enemy : MonoBehaviour
             enemy.SetDestination(target.position);
         }
     }
-
 }

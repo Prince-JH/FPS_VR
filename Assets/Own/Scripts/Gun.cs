@@ -17,10 +17,25 @@ public class Gun : MonoBehaviour
 
     public Animator animator;
     public ParticleSystem muzzleFlash;
-    protected Vector3 aimOriginPos = new Vector3(-0.14f, 0.059f, -0.11f);
+    protected Vector3 aimOriginPos;
+    protected Quaternion aimOriginRot;
+    [SerializeField]
+    private Camera cam;
+    private void Start()
+    {
+        aimOriginPos = new Vector3(-0.0335f, -0.052f, 0.278f);
+        aimOriginRot = Quaternion.Euler(new Vector3(0.002f, -0.294f, -0.014f));
+        //aimOriginPos = Vector3.zero;
+        //aimOriginRot = Quaternion.Euler(Vector3.zero);
+    }
+    //protected Vector3 aimOriginPos = new Vector3(-0.14f, 0.059f, -0.11f);
 
-    public Vector3 getAimOriginPos()
+    public Vector3 GetAimOriginPos()
     {
         return aimOriginPos;
+    }
+    public Quaternion GetAimOriginRot()
+    {
+        return aimOriginRot;
     }
 }

@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class GLControl : MonoBehaviour
 {
+    public SteamVR_Input_Sources rightHand = SteamVR_Input_Sources.RightHand;
+    public SteamVR_Action_Boolean trigger;
+    public SteamVR_Action_Boolean grip;
     //현재 장착된 총
     [SerializeField]
     private Rifle currentRifle;
@@ -13,9 +17,6 @@ public class GLControl : MonoBehaviour
     //플레이어
     [SerializeField]
     private PlayerMove player;
-
-    //연사 속도 계산
-    private float currentFireRate;
     //상태 변수
     private bool isReload = false;
 
@@ -57,7 +58,23 @@ public class GLControl : MonoBehaviour
         }
     }
 
+    private void Fire()
+    {
+        if (trigger.GetState(rightHand) && !isReload)
+        {
+            if (!isReload)
+            {
+                if (currentRifle.currentBulletCount > 0)
+                    Shoot();
+                else
+                {
+                    StartCoroutine(Reload());
+                }
+            }
+        }
+    }
     //발사 시도
+    /*
     private void Fire()
     {
         if (Input.GetButtonDown("Fire1") && currentFireRate <= 0 && !isReload)
@@ -73,6 +90,7 @@ public class GLControl : MonoBehaviour
             }
         }
     }
+    */
     //타겟 체인지
     private void TargetChange()
     {
@@ -97,7 +115,6 @@ public class GLControl : MonoBehaviour
     IEnumerator RetroactionCoroutine()
     {
         Vector3 recoilBack = new Vector3(originPos.x, originPos.y, -currentRifle.resistForce);
-        Vector3 aimRecoilBack = new Vector3(currentRifle.getAimOriginPos().x, currentRifle.getAimOriginPos().y, -currentRifle.resistAimForce);
 
         currentRifle.transform.localPosition = originPos;
 
@@ -120,11 +137,20 @@ public class GLControl : MonoBehaviour
     //재장전 시도
     private void TryReload()
     {
+        if (grip.GetStateDown(rightHand) && !isReload && currentRifle.currentBulletCount < currentRifle.reloadBulletCount)
+        {
+            StartCoroutine(Reload());
+        }
+    }
+    /*
+    private void TryReload()
+    {
         if (Input.GetKeyDown(KeyCode.R) && !isReload && currentRifle.currentBulletCount < currentRifle.reloadBulletCount)
         {
             StartCoroutine(Reload());
         }
     }
+    */
     //재장전
     IEnumerator Reload()
     {
@@ -174,10 +200,7 @@ public class GLControl : MonoBehaviour
 
     public void GunChange(Rifle gun)
     {
-        if (WeaponManager.currentWeapon != null)
-        {
-            WeaponManager.currentWeapon.gameObject.transform.parent.gameObject.SetActive(false);
-        }
+        WeaponManager.currentWeapon.gameObject.transform.parent.gameObject.SetActive(false);
         currentRifle = gun;
         WeaponManager.currentWeapon = currentRifle;
         WeaponManager.currentWeaponAnimator = currentRifle.animator;
