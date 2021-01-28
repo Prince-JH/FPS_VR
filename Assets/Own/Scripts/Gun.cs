@@ -23,7 +23,7 @@ public class Gun : MonoBehaviour
     private Camera cam;
     private void Start()
     {
-        aimOriginPos = new Vector3(-0.0335f, -0.052f, 0.278f);
+        aimOriginPos = new Vector3(0.03f, -0.052f, 0.278f);
         aimOriginRot = Quaternion.Euler(new Vector3(0.002f, -0.294f, -0.014f));
         //aimOriginPos = Vector3.zero;
         //aimOriginRot = Quaternion.Euler(Vector3.zero);

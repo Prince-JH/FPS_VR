@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour
 
     public SteamVR_Action_Boolean trigger;
     public SteamVR_Action_Boolean grip = SteamVR_Input.GetBooleanAction("GrabGrip");
-    public SteamVR_Action_Boolean trackPadTouch;
+    public SteamVR_Action_Boolean trackPadClick;
     public SteamVR_Action_Vector2 trackPadPosition;
     private Gun currentRifle;
     //플레이어 이동 관련 변수
@@ -22,7 +22,7 @@ public class PlayerMove : MonoBehaviour
     private float walkSpeed;
     [SerializeField]
     private float runSpeed;
-    private float jumpForce = 8.5f;
+    private float jumpForce = 6.5f;
     private float speed;
     private Vector3 velocity;
 
@@ -58,7 +58,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private GameObject player;
     [SerializeField]
-    private GameObject raser;
+    private GameObject laser;
     // Start is called before the first frame update
     void Start()
     {
@@ -89,28 +89,35 @@ public class PlayerMove : MonoBehaviour
     //플레이어 VR이동
     private void VRMove()
     {
-        if (trackPadTouch.GetState(leftHand))
+        Vector2 pos;
+        float moveX = 0;
+        float moveZ = 0;
+        if (trackPadClick.GetState(leftHand))
         {
-            Vector2 pos = trackPadPosition.GetAxis(leftHand);
-            float moveX = pos.x;
-            float moveZ = pos.y;
+            pos = trackPadPosition.GetAxis(leftHand);
+            moveX = pos.x;
+            moveZ = pos.y;
 
-            Vector3 moveHorizontal = transform.right * moveX;
-            Vector3 moveVertical = transform.forward * moveZ;
-
-            velocity = (moveHorizontal + moveVertical).normalized * speed;
-            if (velocity.magnitude <= 0.01f)
-                isWalk = false;
-            else if (!isRun)
-                isWalk = true;
-            rig.MovePosition(transform.position + velocity * Time.deltaTime);
-            animator.SetBool("Run", isRun);
-            currentRifle.animator.SetBool("Run", isRun);
-            crosshair.RunAnimation(isRun);
-            animator.SetBool("Walk", isWalk);
-            currentRifle.animator.SetBool("Walk", isWalk);
-            crosshair.WalkAnimation(isWalk);
+            
         }
+        else if(trackPadClick.GetStateUp(leftHand))
+        {
+            moveX = 0;
+            moveZ = 0;
+        }
+        Vector3 moveHorizontal = transform.right * moveX;
+        Vector3 moveVertical = transform.forward * moveZ;
+
+        velocity = (moveHorizontal + moveVertical).normalized * speed;
+        if (velocity.magnitude <= 0.01f)
+            isWalk = false;
+        else if (!isRun)
+            isWalk = true;
+        rig.MovePosition(transform.position + velocity * Time.deltaTime);
+        animator.SetBool("Run", isRun);
+        currentRifle.animator.SetBool("Run", isRun);
+        animator.SetBool("Walk", isWalk);
+        currentRifle.animator.SetBool("Walk", isWalk);
     }
     //플레이어 이동
     private void Move()
@@ -168,7 +175,7 @@ public class PlayerMove : MonoBehaviour
     //바닥에 있는지 확인
     private void IsGround()
     { 
-        isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y);
+        isGround = Physics.Raycast(transform.position, Vector3.down,out RaycastHit hitinfo, capsuleCollider.bounds.extents.y - 1f);
         //crosshair.JumpAnimation(!isGround);
     }
     //점프
@@ -231,7 +238,7 @@ public class PlayerMove : MonoBehaviour
             isDead = true;
             rig.isKinematic = true;
             gameOver.gameObject.SetActive(true);
-            raser.SetActive(true);
+            laser.SetActive(true);
         }
     }
     private void OnCollisionEnter(Collision collision)

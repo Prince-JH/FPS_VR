@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public static bool isPlay = true;
 
     [SerializeField]
-    private GameObject raser;
+    private GameObject laser;
     private void Start()
     {
         InvokeRepeating("EnemySpawn", 0, 2f);
@@ -56,14 +56,14 @@ public class GameManager : MonoBehaviour
     {
         if (isPause)
         {
-            raser.SetActive(true);
+            laser.SetActive(false);
             isPause = false;
             pauseMenu.SetActive(false);
             Time.timeScale = 1;
         }
         else
         {
-            raser.SetActive(false);
+            laser.SetActive(true);
             isPause = true;
             pauseMenu.SetActive(true);
             Time.timeScale = 0;

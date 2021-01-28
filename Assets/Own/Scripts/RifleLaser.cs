@@ -14,7 +14,7 @@ public class RifleLaser : MonoBehaviour
     private RaycastHit hitObj;
     private GameObject currentHitObj;
 
-    public float raycastDistance = 30f;
+    public float raycastDistance = 2f;
     // Start is called before the first frame update
     void Start()
     {

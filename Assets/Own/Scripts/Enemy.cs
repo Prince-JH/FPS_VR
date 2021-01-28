@@ -42,11 +42,14 @@ public class Enemy : MonoBehaviour
     private Animator animator;
     private bool logFlag = true;
     // Start is called before the first frame update
+    private void Awake()
+    {
+        enemy = GetComponent<NavMeshAgent>();
+    }
     void Start()
     {
         animator = GetComponent<Animator>();
         killLog = FindObjectOfType<KillLog>();
-        enemy = GetComponent<NavMeshAgent>();
         bulletPos = muzzleFlash.transform;
     }
 
@@ -107,7 +110,7 @@ public class Enemy : MonoBehaviour
     {
         if (enemy.velocity == Vector3.zero && enemy.enabled && target == null)
             MoveToNextWayPoint();
-        else if (enemy.velocity == Vector3.zero && enemy.enabled  &&  !isSearch && !isAttack && !isFollow)
+        else if (enemy.velocity == Vector3.zero && enemy.enabled && !isSearch && !isAttack && !isFollow)
             MoveToNextWayPoint();
     }
     private void MoveToNextWayPoint()
@@ -163,8 +166,6 @@ public class Enemy : MonoBehaviour
             */
             }
         }
-        if (PlayerMove.healthPoint <= 0)
-            target = null;
     }
     IEnumerator EnemyShoot()
     {
@@ -184,14 +185,18 @@ public class Enemy : MonoBehaviour
         if (other.transform.tag == "Player")
         {
             target = other.transform;
-            if (PlayerMove.healthPoint == 0)
+            if (PlayerMove.healthPoint <= 0)
+            {
                 target = null;
-            TargetVisible();
+                enemy.velocity = Vector3.zero;
+            }
+            else
+                TargetVisible();
         }
     }
     private void TargetVisible()
     {
-        if (target != null && enemy.enabled)
+        if (enemy.enabled)
         {
             Vector3 targetDirection = (target.position - transform.position).normalized;
             if (Physics.Raycast(transform.position + new Vector3(0, 2, 0), targetDirection, out RaycastHit rayHit, observeRange))
@@ -202,11 +207,14 @@ public class Enemy : MonoBehaviour
                 {
                     isSearch = false;
                     isFollow = true;
-                    if(enemy.velocity == Vector3.zero)
-                        enemy.SetDestination(target.position);
-                }
-                else if(rayHit.transform.tag == "EnemyBullet" || rayHit.transform.tag == "Bullet")
+                    if (rayHit.transform.tag == "EnemyBullet" || rayHit.transform.tag == "Bullet")
                         ;
+                    else if (enemy.velocity == Vector3.zero)
+                    {
+                        Debug.Log(rayHit.transform.name);
+                        enemy.SetDestination(target.position);
+                    }
+                }
                 else
                 {
                     isAttack = false;
@@ -220,6 +228,7 @@ public class Enemy : MonoBehaviour
         if (other.transform.tag == "Player" && target != null && enemy.enabled)
         {
             isSearch = false;
+            Debug.Log("이거네");
             enemy.SetDestination(target.position);
         }
     }

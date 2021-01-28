@@ -17,7 +17,7 @@ public class EnemyCount : MonoBehaviour
     private GameObject player;
 
     [SerializeField]
-    private GameObject raser;
+    private GameObject laser;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +45,8 @@ public class EnemyCount : MonoBehaviour
             GameManager.isPlay = false;
             player.GetComponent<Rigidbody>().isKinematic = true;
             missionComplete.SetActive(true);
-            
+
+            laser.SetActive(true);
         }
 
     }
