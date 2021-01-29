@@ -35,6 +35,8 @@ public class Enemy : MonoBehaviour
     private GameObject potionYellow;
     [SerializeField]
     private GameObject bullet;
+    [SerializeField]
+    private Collider[] cols;
 
     [HideInInspector]
     public int hp = 3;
@@ -87,6 +89,8 @@ public class Enemy : MonoBehaviour
         else
             animator.SetTrigger("Dead");
         DropPotion();
+        for (int i = 0; i < cols.Length; i++)
+            cols[i].enabled = false;
         yield return new WaitForSeconds(2);
         Destroy(gameObject);
         GameManager.enemyCount--;
@@ -228,7 +232,6 @@ public class Enemy : MonoBehaviour
         if (other.transform.tag == "Player" && target != null && enemy.enabled)
         {
             isSearch = false;
-            Debug.Log("이거네");
             enemy.SetDestination(target.position);
         }
     }

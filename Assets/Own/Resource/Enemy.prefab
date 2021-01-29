@@ -286,12 +286,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4096
   muzzleFlash: {fileID: 693751160374475148}
-  bullet: {fileID: 7871610512598145959, guid: b9bafdaef739bde40ae8b8ffc45dfa70, type: 3}
   gunSound: {fileID: 1305855666827903079}
   potionRed: {fileID: 4643526178065226425, guid: 22ae9c6251a95de4c9a362dcf7a741e7,
     type: 3}
   potionYellow: {fileID: 4643526178065226425, guid: 703ccddee5df53343b535793823edb0a,
     type: 3}
+  bullet: {fileID: 7871610512598145959, guid: b9bafdaef739bde40ae8b8ffc45dfa70, type: 3}
+  cols:
+  - {fileID: 8993829416879807980}
+  - {fileID: 1305855665192312849}
+  - {fileID: 1305855667032427812}
   hp: 3
 --- !u!195 &1305855665192312855
 NavMeshAgent:

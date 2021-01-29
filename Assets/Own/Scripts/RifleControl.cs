@@ -220,7 +220,7 @@ public class RifleControl : MonoBehaviour
             gameObject.transform.localPosition = currentRifle.GetAimOriginPos();
 
             //반동
-            while (gameObject.transform.localPosition.z > -currentRifle.resistAimForce + 0.25f)
+            while (gameObject.transform.localPosition.z > -currentRifle.resistAimForce + 0.2595f)
             {
                 gameObject.transform.localPosition = Vector3.Lerp(gameObject.transform.localPosition, aimRecoilBack, 0.4f);
                 yield return null;
